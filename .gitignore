@@ -4,3 +4,5 @@ node_modules/**
 **/clientDist/**
 **/src/*.js
 **/src/*.jsx
+**.csv
+**/accessConsts.ts
