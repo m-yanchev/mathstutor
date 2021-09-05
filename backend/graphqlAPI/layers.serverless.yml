@@ -1,0 +1,13 @@
+service: graphql-api
+provider:
+  name: aws
+  region: eu-central-1
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+layers:
+  libs:
+    path: layers/libs
+    retain: true
+  nodeModules:
+    path: layers/nodeModules
+    retain: true

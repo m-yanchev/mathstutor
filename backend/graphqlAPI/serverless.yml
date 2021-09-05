@@ -1,0 +1,68 @@
+service: graphql-api
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!libs/**'
+    - '!package.json'
+    - '!package-lock.json'
+    - '!supergraph.graphql'
+    - '!supergraph-config.yaml'
+    - '!tsconfig.json'
+    - '!libs.webpack.config.js'
+    - '!layers.serverless.yml'
+    - '!layers/**'
+plugins:
+  - serverless-plugin-typescript
+provider:
+  name: aws
+  region: eu-central-1
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  layers:
+    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:39
+    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:35
+functions:
+  gateway:
+    handler: handlers/gateway/index.handler
+    events:
+      - http:
+          path: /gateway
+          method: post
+          cors:
+            origin: https://mathstutor.ru
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: true
+  profile:
+    handler: handlers/profile/index.handler
+    events:
+      - http:
+          path: /profile
+          method: post
+          cors: true
+  appointment:
+    handler: handlers/appointment/index.handler
+    events:
+      - http:
+          path: /appointment
+          method: post
+          cors: true
+  course:
+    handler: handlers/course/index.handler
+    events:
+      - http:
+          path: /course
+          method: post
+          cors: true
+  lesson:
+    handler: handlers/lesson/index.handler
+    events:
+      - http:
+          path: /lesson
+          method: post
+          cors: true

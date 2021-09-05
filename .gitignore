@@ -1,8 +1,14 @@
 node_modules/**
 **/dist/**
-**/serverDist/**
-**/clientDist/**
+**/*Dist/**
 **/src/*.js
 **/src/*.jsx
 **.csv
+**.zip
 **/accessConsts.ts
+**/package-lock.json
+**/access.txt
+**layers/**
+**.serverless/**
+**/public/**
+**supergraph.graphql

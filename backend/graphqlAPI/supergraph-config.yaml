@@ -1,0 +1,17 @@
+subgraphs:
+  profile:
+    routing_url: https://api.mathstutor.ru/profile
+    schema:
+      subgraph_url: https://api.mathstutor.ru/profile
+  appointment:
+    routing_url: https://api.mathstutor.ru/appointment
+    schema:
+      subgraph_url: https://api.mathstutor.ru/appointment
+  course:
+    routing_url: https://api.mathstutor.ru/course
+    schema:
+      subgraph_url: https://api.mathstutor.ru/course
+  lesson:
+    routing_url: https://api.mathstutor.ru/lesson
+    schema:
+      subgraph_url: https://api.mathstutor.ru/lesson

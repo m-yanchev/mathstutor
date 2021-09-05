@@ -1,8 +1,8 @@
 import React from "react";
+import {ServerStyleSheets} from "@material-ui/core/styles";
 import ReactDOMServer from "react-dom/server";
-import LandingPage from "./LandingPage";
 import htmlTemplate from "../../../common/htmlTemplate";
-import {PATH} from "./constants"
+import App from "./App";
 
 const TITLE = "Репетитор по математике"
 const DESC = "Обо мне. Об уроках. Отзывы. Контакты."
@@ -17,11 +17,13 @@ const result = body => ({
 })
 
 export async function handler() {
-    const layout = ReactDOMServer.renderToString(<LandingPage path={PATH}/>)
+    const sheets = new ServerStyleSheets()
+    const layout = ReactDOMServer.renderToString(sheets.collect(<App/>))
     return result(htmlTemplate({
         layout,
         title: TITLE,
         description: DESC,
-        path: PATH
+        path: "about",
+        cssString: sheets.toString()
     }))
 }

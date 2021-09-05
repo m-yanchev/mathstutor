@@ -1,23 +1,19 @@
-import React, {useState} from 'react';
-import LandingPage, {OnScroll} from "./LandingPage";
-import {PATH} from "./constants";
+import React from 'react';
+import LandingPage from "./LandingPage";
+import {ThemeProvider} from "@material-ui/core/styles";
+import getTheme from "../../common/theme";
+import {CssBaseline} from "@material-ui/core";
 
 function App() {
 
-    const [scrolling, setScrolling] = useState({prevScrollTop: 0, scrollTop: 0})
-
-    const handleScroll: OnScroll = scrollTop => {
-        const newScrollTop = scrollTop
-        setScrolling(prevScrolling => ({
-                prevScrollTop: prevScrolling.scrollTop,
-                scrollTop: newScrollTop
-            })
-        )
-    }
-
-    const menuBarHidden = scrolling.scrollTop - scrolling.prevScrollTop > 0
-
-    return <LandingPage path={PATH} menuBarHidden={menuBarHidden} onScroll={handleScroll}/>
+    return (
+        <>
+            <CssBaseline/>
+            <ThemeProvider theme={getTheme()}>
+                <LandingPage/>
+            </ThemeProvider>
+        </>
+    )
 }
 
 export default App;

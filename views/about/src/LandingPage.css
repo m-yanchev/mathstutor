@@ -1,62 +1,9 @@
-body {
-    margin: 0;
+.bar .p-scrollpanel-wrapper {
+    border-right: 10px solid var(--surface-b);
 }
 
-.menu-bar {
-    position: fixed;
-    width: 100%;
-    z-index: 2;
-    transition: top 400ms ease-in-out;
-}
-
-.menu-bar .start {
-    text-decoration: none;
-}
-
-.body {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-
-.about-me {
-    margin-top: 5rem;
-}
-
-.about-lessons {
-    width: 100%
-}
-
-.section {
-    padding: 2rem;
-}
-
-.desc {
-    padding: 0 1rem
-}
-
-.desc p {
-    line-height: 2;
-}
-
-.card .content {
-    height: 16rem
-}
-
-.card .title {
-    height: 4rem
-}
-
-.card .subtitle {
-    height: 2rem
-}
-
-.card p {
-    line-height: 1.5;
-}
-
-.icons {
-    width: 5rem;
+.bar .p-scrollpanel-bar {
+    background-color: #D0E0D0;
+    opacity: 1;
+    transition: background-color .2s;
 }

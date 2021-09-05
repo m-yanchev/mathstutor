@@ -2,15 +2,21 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "graphql.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "main": "index.js",
+  "directories": {
+    "test": ""
   },
-  "author": "",
+  "scripts": {
+    "build spa server": "rm -r -f spa/dist && webpack --config spa/webpack.config.js && cd spa/dist && zip spa.zip spa.js",
+    "build sendmephone": "rm -r -f sendMePhone/dist && webpack --config sendMePhone/webpack.config.js && cd sendMePhone/dist && zip sendMePhone.zip sendMePhone.js",
+    "build sign-in": "rm -r -f signIn/dist && webpack --config signIn/webpack.config.js && cd signIn/dist && zip signIn.zip index.js"
+  },
+  "author": "Yanchev",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
-    "serverless-plugin-typescript": "^1.1.9",
-    "typescript": "^4.3.5"
+    "serverless-plugin-typescript": "^1.1.9"
+  },
+  "dependencies": {
+    "@vendia/serverless-express": "^4.3.10"
   }
 }
