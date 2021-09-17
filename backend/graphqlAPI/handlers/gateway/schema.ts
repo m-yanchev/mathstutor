@@ -19,23 +19,20 @@ directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
 type Appointment
   @join__owner(graph: APPOINTMENT)
-  @join__type(graph: APPOINTMENT, key: "id")
-  @join__type(graph: COURSE, key: "id")
+  @join__type(graph: APPOINTMENT, key: "courseTitle")
+  @join__type(graph: COURSE, key: "courseTitle")
 {
   course: Course! @join__field(graph: COURSE)
+  courseTitle: String! @join__field(graph: APPOINTMENT)
   id: ID! @join__field(graph: APPOINTMENT)
-  startTimeStamp: String! @join__field(graph: APPOINTMENT)
+  startTimeStamp: Int! @join__field(graph: APPOINTMENT)
+  vacations: [Vacations!] @join__field(graph: APPOINTMENT)
   weekDays: [WeekDay!]! @join__field(graph: APPOINTMENT)
 }
 
-type Course
-  @join__owner(graph: COURSE)
-  @join__type(graph: COURSE, key: "lessonIDList")
-  @join__type(graph: LESSON, key: "lessonIDList")
-{
-  lessonIDList: [String!]! @join__field(graph: COURSE)
-  lessons: [Lesson!]! @join__field(graph: LESSON)
-  title: String! @join__field(graph: COURSE)
+type Course {
+  lessonTitles: [String!]!
+  title: String!
 }
 
 scalar join__FieldSet
@@ -43,12 +40,7 @@ scalar join__FieldSet
 enum join__Graph {
   APPOINTMENT @join__graph(name: "appointment" url: "https://api.mathstutor.ru/appointment")
   COURSE @join__graph(name: "course" url: "https://api.mathstutor.ru/course")
-  LESSON @join__graph(name: "lesson" url: "https://api.mathstutor.ru/lesson")
   PROFILE @join__graph(name: "profile" url: "https://api.mathstutor.ru/profile")
-}
-
-type Lesson {
-  title: String!
 }
 
 type Mutation {
@@ -77,7 +69,12 @@ type ProfileResult {
 }
 
 type Query {
-  profile: Profile! @join__field(graph: PROFILE)
+  profile: Profile @join__field(graph: PROFILE)
+}
+
+type Vacations {
+  finishTimeStamp: Int!
+  startTimeStamp: Int!
 }
 
 type WeekDay {

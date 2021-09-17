@@ -5,7 +5,7 @@ const EMAIL_EXIST_MESSAGE = "Пользователь с таким адресо
 const EMAIL_FORMAT_MESSAGE = 'Неверный формат адреса электронной почты'
 
 type Props = {
-    emailExist: boolean,
+    emailExist?: boolean,
     onConfirm: () => void,
     onChange: (arg0: string | null) => void
 }
@@ -13,7 +13,7 @@ type Props = {
 export default function EmailInput(props: Props) {
 
     const {emailExist, ...rest} = props
-    const errorMessage = emailExist ? EMAIL_EXIST_MESSAGE : EMAIL_FORMAT_MESSAGE
+    const errorMessage = Boolean(emailExist) ? EMAIL_EXIST_MESSAGE : EMAIL_FORMAT_MESSAGE
     return <InputValidation id="email" type="email" label="Эл. адрес" autoComplete={"email"} required
                             errorMessage={errorMessage} validate={validate} {...rest} error={emailExist}/>
 

@@ -22,5 +22,11 @@ export const templateData = {
         title: "Вход",
         description: "Вход на сайт",
         isNotStyles: true
+    },
+    "sign-out": {
+        path: "/form/sign-out/",
+        title: "Выход",
+        description: "Выход из системы",
+        isNotStyles: true
     }
 }

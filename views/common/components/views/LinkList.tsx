@@ -11,7 +11,7 @@ type Props = {
     items: Array<Item>
 }
 
-type Item = {
+export type Item = {
     id: string,
     href: string,
     label: string

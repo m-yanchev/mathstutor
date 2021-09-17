@@ -23,11 +23,13 @@ const QUERY = gql`
                     minute
                     duration
                 }
+                vacations {
+                    startTimeStamp
+                    finishTimeStamp
+                }
                 course {
                     title
-                    lessons {
-                        title
-                    }
+                    lessonTitles 
                 }
             }
         }
@@ -53,7 +55,7 @@ export default function Root() {
     return (
         <ThemeProvider theme={getTheme()}>
             <AppBar profile={Boolean(profile)}/>
-            <Container>
+            <Container height={256}>
                 {profileState.loading ?
                     <Progress/> :
                     <>

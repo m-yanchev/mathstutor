@@ -1,2 +1,1 @@
-module.exports = require('../dev.webpack.config')("signin" +
-    "");
+module.exports = require('../dev.webpack.config')("signin");

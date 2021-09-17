@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /form/sign-in
+Disallow: /form/sign-up
+Disallow: /form/replace-password

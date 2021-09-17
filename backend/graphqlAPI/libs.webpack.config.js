@@ -10,6 +10,7 @@ module.exports = {
         userHeaders: path.join(__dirname, "/libs/userHeaders.ts"),
         userToken: path.join(__dirname, "/libs/userToken.ts"),
         apolloSubgraphHandler: path.join(__dirname, "/libs/apolloSubgraphHandler.ts"),
+        dynamoDBAPI: path.join(__dirname, "/libs/dynamoDBAPI.ts")
     },
     output: {
         path: path.join(__dirname, '/layers/libs/nodejs/node_modules'),
@@ -30,6 +31,7 @@ module.exports = {
         "mongodb": "commonjs mongodb",
         "nodemailer": "commonjs nodemailer",
         "@apollo/federation": "commonjs @apollo/federation",
-        "apollo-server-lambda": "commonjs apollo-server-lambda"
+        "apollo-server-lambda": "commonjs apollo-server-lambda",
+        "@aws-sdk/client-dynamodb": "commonjs @aws-sdk/client-dynamodb"
     }
 };

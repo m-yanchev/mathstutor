@@ -69,3 +69,25 @@ describe("format", () => {
         expect(timeDate.format("hour:minute")).toBe("21:04")
     })
 })
+
+describe("weekDay", () => {
+
+    test('Должен вернуть 2', () => {
+        const timeDate = new TimeDate(1643731936454) // 01 февраля 2022
+        expect(timeDate.weekDay).toBe(2)
+    })
+
+    test('Должен вернуть 6', () => {
+        const timeDate = new TimeDate(1635005536903) // 23 октября 2021
+        expect(timeDate.weekDay).toBe(6)
+    })
+})
+
+describe("dayCountTo", () => {
+
+    test('Должен вернуть 102', () => {
+        const firstDate = new TimeDate(1635005536903) // 23 октября 2021
+        const lastDate = new TimeDate(1643731936454) // 01 февраля 2022
+        expect(firstDate.dayCountTo(lastDate)).toBe(102)
+    })
+})

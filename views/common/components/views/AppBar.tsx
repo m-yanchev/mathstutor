@@ -22,8 +22,7 @@ const useStyles = makeStyles({
     },
     logo: {
         fontSize: "1.2rem",
-        fontWeight: 600,
-        letterSpacing: "0.05rem"
+        fontWeight: 600
     }
 })
 

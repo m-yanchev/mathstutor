@@ -15,7 +15,12 @@
     "build profile client": "webpack --config views/profile/prod.webpack.config.js",
     "start root": "webpack serve --config views/root/dev.webpack.config.js --open",
     "build root client": "webpack --config views/root/prod.webpack.config.js",
-    "build signin client": "webpack --config views/signin/prod.webpack.config.js"
+    "start signin": "webpack serve --config views/signin/dev.webpack.config.js --open",
+    "build signin client": "webpack --config views/signin/prod.webpack.config.js",
+    "start sign-out": "webpack serve --config views/sign-out/dev.webpack.config.js --open",
+    "build sign-out client": "webpack --config views/sign-out/prod.webpack.config.js",
+    "start dev-page": "webpack serve --config views/dev-page/dev.webpack.config.js --open",
+    "build dev-page client": "webpack --config views/dev-page/prod.webpack.config.js"
   },
   "repository": {
     "type": "git",

@@ -12,7 +12,7 @@ type Props = {
     className?: string,
     onClick: () => void,
     children?: string,
-    disabled: boolean
+    disabled?: boolean
 }
 
 export default function ConfirmButton(props: Props) {
@@ -22,7 +22,7 @@ export default function ConfirmButton(props: Props) {
 
     return (
         <Grid className={classes.root} container justifyContent={"center"}>
-            <Button variant={"contained"} color="primary" {...rest}>{children || CONFIRM_TITLE}</Button>
+            <Button variant={"outlined"} color="primary" {...rest}>{children || CONFIRM_TITLE}</Button>
         </Grid>
     )
 }

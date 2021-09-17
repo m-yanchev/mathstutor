@@ -25,14 +25,22 @@ const yandexMetrika = `
 <!-- /Yandex.Metrika counter -->
 `
 
-export default function htmlTemplate(props: HTMLTemplateProps) {
-    const {layout, title, description, isNotStyles, path, cssString} = props
+export default function htmlTemplate(props?: HTMLTemplateProps) {
+    const {layout, title, description, isNotStyles, path, cssString} = props || {
+        title: "В разработке",
+        description: "Страница находится в разработке",
+        path: "/form/dev-page/",
+        isNotStyles: true
+    }
     return `
 <!doctype html>
 <html lang="ru">
 <head>
     <title>${title}</title>
     ${process.env.NODE_ENV === "production" ? yandexMetrika : ""}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <meta charset="utf-8" />

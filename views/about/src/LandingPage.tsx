@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
         padding: "0.4rem"
     },
     toolbarLinks: {
-        width: "30rem"
+        width: "33rem"
     },
     profiLink: {
         marginLeft: "1rem"
@@ -165,7 +165,7 @@ function LandingPage() {
             {children}
         </Box>
     const ActionButton = ({children, ...rest}) =>
-        <Button onClick={handleOpenCallbackDialog} variant={"contained"} color={"primary"} {...rest}>
+        <Button onClick={handleOpenCallbackDialog} variant={"outlined"} color={"primary"} {...rest}>
             {children}
         </Button>
     const CardSubtitle = ({price, personCountDesc}) =>

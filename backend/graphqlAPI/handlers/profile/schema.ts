@@ -2,7 +2,7 @@ import {gql} from "apollo-server-lambda";
 
 export const typeDefs = gql`
     type Query {
-        profile: Profile!
+        profile: Profile
     }
     type Profile @key(fields: "id"){
         id: ID!

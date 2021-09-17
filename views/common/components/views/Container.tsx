@@ -27,8 +27,11 @@ export default function Container({children, height}: Props) {
     return (
         <Grid className={classes.root} container alignItems={"center"} justifyContent={"center"}>
             <MaterialContainer className={classes.container} fixed maxWidth={"xs"} disableGutters>
-                <Paper className={classes.paper} elevation={3} style={{height}}>
-                    {children}
+                <Paper elevation={3}>
+                    <Grid className={classes.paper} container alignItems={"stretch"}
+                          style={{minHeight: height}}>
+                        {children}
+                    </Grid>
                 </Paper>
             </MaterialContainer>
         </Grid>

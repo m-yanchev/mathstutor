@@ -6,19 +6,21 @@ import {GetUserFromHeader, getUserFromHeaders} from "./userHeaders";
 
 type Options = {
     typeDefs: DocumentNode,
-    resolvers: any
+    resolvers: any,
+    dataSource?: any
 }
 
 const getUserFromHeader = (req): GetUserFromHeader => (name: string): string => req.headers[name]
 
 const getServer = async (options: Options) => {
-    const {typeDefs, resolvers} = options
+    const {typeDefs, resolvers, dataSource} = options
     const context = ({express}) => {
         return {
             userAPI: {
                 user: getUserFromHeaders(getUserFromHeader(express.req))
             },
             mongoAPI: {findOne, updateOne, insertOne, deleteOne},
+            dataSource: dataSource
         }
     }
     return new ApolloServer({schema: buildSubgraphSchema([{typeDefs, resolvers}]), context})

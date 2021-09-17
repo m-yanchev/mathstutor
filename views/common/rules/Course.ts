@@ -1,9 +1,8 @@
 import Lesson from "./Lesson";
-import type {LessonData} from "./Lesson";
 
 export type CourseData = {
     title: string,
-    lessons: Array<LessonData>
+    lessonTitles: Array<string>
 }
 
 export default class Course {
@@ -13,7 +12,7 @@ export default class Course {
 
     constructor(data: CourseData) {
         this._title = data.title
-        this._lessons = data.lessons.map(lesson => Lesson.create(lesson))
+        this._lessons = data.lessonTitles.map(title => Lesson.create({title}))
     }
 
     static create(data: CourseData): Course {

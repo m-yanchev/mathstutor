@@ -9,7 +9,8 @@
   "scripts": {
     "build spa server": "rm -r -f spa/dist && webpack --config spa/webpack.config.js && cd spa/dist && zip spa.zip spa.js",
     "build sendmephone": "rm -r -f sendMePhone/dist && webpack --config sendMePhone/webpack.config.js && cd sendMePhone/dist && zip sendMePhone.zip sendMePhone.js",
-    "build sign-in": "rm -r -f signIn/dist && webpack --config signIn/webpack.config.js && cd signIn/dist && zip signIn.zip index.js"
+    "build sign-in": "rm -r -f signIn/dist && webpack --config signIn/webpack.config.js && cd signIn/dist && zip signIn.zip index.js",
+    "build sign-out": "rm -r -f sign-out/dist && webpack --config sign-out/webpack.config.js && cd sign-out/dist && zip signOut.zip index.js"
   },
   "author": "Yanchev",
   "license": "ISC",

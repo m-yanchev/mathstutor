@@ -1,6 +1,7 @@
 service: graphql-api
 package:
   patterns:
+    - '!**'
     - '!node_modules/**'
     - '!libs/**'
     - '!package.json'
@@ -11,19 +12,24 @@ package:
     - '!libs.webpack.config.js'
     - '!layers.serverless.yml'
     - '!layers/**'
+  individually: true
 plugins:
   - serverless-plugin-typescript
 provider:
   name: aws
   region: eu-central-1
   runtime: nodejs14.x
+  timeout: 15
   lambdaHashingVersion: 20201221
   layers:
-    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:39
-    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:35
+    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:45
+    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:41
 functions:
   gateway:
     handler: handlers/gateway/index.handler
+    package:
+      patterns:
+        - handlers/gateway/*
     events:
       - http:
           path: /gateway
@@ -40,6 +46,9 @@ functions:
             allowCredentials: true
   profile:
     handler: handlers/profile/index.handler
+    package:
+      patterns:
+        - handlers/profile/*
     events:
       - http:
           path: /profile
@@ -47,6 +56,9 @@ functions:
           cors: true
   appointment:
     handler: handlers/appointment/index.handler
+    package:
+      patterns:
+        - handlers/appointment/*
     events:
       - http:
           path: /appointment
@@ -54,15 +66,11 @@ functions:
           cors: true
   course:
     handler: handlers/course/index.handler
+    package:
+      patterns:
+        - handlers/course/*
     events:
       - http:
           path: /course
-          method: post
-          cors: true
-  lesson:
-    handler: handlers/lesson/index.handler
-    events:
-      - http:
-          path: /lesson
           method: post
           cors: true

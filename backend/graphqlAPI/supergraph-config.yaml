@@ -11,7 +11,3 @@ subgraphs:
     routing_url: https://api.mathstutor.ru/course
     schema:
       subgraph_url: https://api.mathstutor.ru/course
-  lesson:
-    routing_url: https://api.mathstutor.ru/lesson
-    schema:
-      subgraph_url: https://api.mathstutor.ru/lesson

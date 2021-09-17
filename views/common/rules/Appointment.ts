@@ -5,7 +5,8 @@ import Lesson from "./Lesson";
 
 export type AppointmentData = {
     startTimeStamp: number,
-    weekDays: Array<WeekDay>,
+    weekDays: WeekDay[],
+    vacations: Vacation[] | null,
     course: CourseData
 }
 
@@ -16,6 +17,11 @@ type WeekDay = {
     duration: number | null
 }
 
+type Vacation = {
+    startTimeStamp: number,
+    finishTimeStamp: number
+}
+
 export default class Appointment {
 
     _durations: Array<number>
@@ -23,6 +29,7 @@ export default class Appointment {
     _course: Course
 
     constructor(data: AppointmentData) {
+
         const sortedWeekDays = data.weekDays.sort((a, b) =>
             (a.number < b.number ||
                 a.number === b.number && (a.hour < b.hour || a.hour === b.hour && a.minute < b.minute)) ? -1 : 1
@@ -34,18 +41,52 @@ export default class Appointment {
                 {day: weekDay.number, hour: weekDay.hour, minute: weekDay.minute}
             )
         )
-        const startWeekDayIndex = firstWeekDates.findIndex(date => !date.earlierThan(startDate))
+        let startWeekDayIndex = firstWeekDates.findIndex(date => !date.earlierThan(startDate))
+        if (startWeekDayIndex === -1) startWeekDayIndex = firstWeekDates.length
         this._course = Course.create(data.course)
-        const getWeekDayIndex = lessonIndex => (startWeekDayIndex + lessonIndex) % sortedWeekDays.length
+        const getIncompleteWeekLessonCount = lessonCount => lessonCount % sortedWeekDays.length
+        const getWeekDayIndex = lessonIndex => getIncompleteWeekLessonCount(startWeekDayIndex + lessonIndex)
+        const getCompleteWeekCount = lessonCount => Math.floor(lessonCount / sortedWeekDays.length)
+
+        const preparedVacations = (data.vacations || []).sort((a, b) =>
+            a.startTimeStamp < b.startTimeStamp ? -1 : 1
+        ).map(vacation => {
+            const startDate = TimeDate.createBySec(vacation.startTimeStamp)
+            const dayCount = startDate.dayCountTo(TimeDate.createBySec(vacation.finishTimeStamp))
+            const incompleteWeekDayCount = dayCount % 7
+            const startWeekDayNumber = startDate.weekDay
+            const weekRestLessonCount = sortedWeekDays.reduce((count, {number}) =>
+                count + ((number < startWeekDayNumber + incompleteWeekDayCount - 7) ? 1 : 0) +
+                ((number >= startWeekDayNumber && number < startWeekDayNumber + incompleteWeekDayCount) ? 1 : 0)
+                , 0)
+            return {
+                startDate,
+                lessonCount: Math.floor(dayCount / 7) * sortedWeekDays.length + weekRestLessonCount
+            }
+        })
+
+        const getLessonDate = lessonIndex => {
+            const weekIndex: number = getCompleteWeekCount(startWeekDayIndex + lessonIndex)
+            return firstWeekDates[getWeekDayIndex(lessonIndex)].offset({week: weekIndex})
+        }
         this._dates = Array(this._course.lessons.length)
         for (let i = 0; i < this._dates.length; i++) {
-            const weekIndex: number = Math.floor((startWeekDayIndex + i) / sortedWeekDays.length)
-            const weekDayIndex: number = getWeekDayIndex(i)
-            this._dates[i] = firstWeekDates[weekDayIndex].offset({week: weekIndex})
+            this._dates[i] = preparedVacations.reduce(
+                (lesson, vacation) => {
+                    if (vacation.startDate.earlierThan(lesson.date)) {
+                        const count = lesson.count + vacation.lessonCount
+                        return {date: getLessonDate(count), count}
+                    } else {
+                        return lesson
+                    }
+                },
+                {date: getLessonDate(i), count: i}
+            ).date
         }
-        this._durations = Array(sortedWeekDays.length)
+
+        this._durations = Array(7)
         for (let i = 0; i < sortedWeekDays.length; i++) {
-            this._durations[i] = sortedWeekDays[getWeekDayIndex(i)].duration || 60
+            this._durations[sortedWeekDays[getWeekDayIndex(i)].number] = sortedWeekDays[getWeekDayIndex(i)].duration
         }
     }
 
@@ -53,8 +94,8 @@ export default class Appointment {
         return data ? new Appointment(data) : null
     }
 
-    lessonDuration(index: number): number {
-        return this._durations[index % this._durations.length]
+    lessonDuration(lessonIndex: number): number {
+        return this._durations[this._dates[lessonIndex].weekDay] || 60
     }
 
     endLessonDate(index: number): TimeDate {

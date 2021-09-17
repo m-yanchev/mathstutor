@@ -7,7 +7,8 @@ export default function ProfileMenu() {
 
     const items = [
         {id: "profile", href: "/form/profile", label: "Просмотр и редактирование профиля"},
-        {id: "update-password", href: "/form/update-password", label: "Изменение пароля"}
+        {id: "update-password", href: "/form/update-password", label: "Изменение пароля"},
+        {id: "sign-out", href: "/form/sign-out", label: "Выход"}
     ]
 
     const MenuButton = ({onClick}) => <IconButton onClick={onClick} color={"inherit"}><AccountBoxIcon/></IconButton>

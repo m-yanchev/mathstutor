@@ -1,34 +1,31 @@
 import React from "react";
-import {Grid, makeStyles} from "@material-ui/core";
-import ResultMessage from "../../common/components/views/ResultMessage";
-import LinkList from "../../common/components/views/LinkList";
-
-const useStyles = makeStyles({
-    root: {
-        height: "100%"
-    },
-    message: {
-        paddingBottom: "3rem"
-    }
-})
+import MainForm from "../../common/components/views/MainForm";
+import EmailInput from "../../common/components/views/EmailInput";
+import PasswordInput from "../../common/components/views/PasswordInput";
 
 type Props = {
-    children: string | null
+    onConfirm: () => void,
+    onChange: (formItem: FormItem) => void,
+    confirmDisabled: boolean
 }
+type FormItem = {
+    name: FormItemName,
+    value: string
+}
+type FormItemName = "email" | "password"
+
+const FORM_HEADER = "Вход"
+const CONFIRM_BUTTON_TITLE = "Войти"
 
 export default function SignInDialog(props: Props) {
 
-    const {children} = props
-    const classes = useStyles()
-
-    const linkItems = [{id: "root", href: "/", label: "Главная страница"}]
+    const {onConfirm, onChange, confirmDisabled} = props
 
     return (
-        <Grid className={classes.root} container direction={"column"} justifyContent={"space-between"}>
-            <ResultMessage className={classes.message}>
-                {children || ""}
-            </ResultMessage>
-            <LinkList items={linkItems}/>
-        </Grid>
+            <MainForm header={FORM_HEADER} confirmButtonTitle={CONFIRM_BUTTON_TITLE} onConfirm={onConfirm}
+                      confirmDisabled={confirmDisabled}>
+                <EmailInput onConfirm={onConfirm} onChange={value => onChange({name: "email", value})}/>
+                <PasswordInput onConfirm={onConfirm} onChange={value => onChange({name: "password", value})}/>
+            </MainForm>
     )
 }

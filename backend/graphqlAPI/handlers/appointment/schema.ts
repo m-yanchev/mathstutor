@@ -5,15 +5,21 @@ export const typeDefs = gql`
         id: ID! @external
         appointment: Appointment
     }    
-    type Appointment @key(fields: "id"){
+    type Appointment @key(fields: "courseTitle"){
         id: ID!
         startTimeStamp: Int!
         weekDays: [WeekDay!]!
+        courseTitle: String!
+        vacations: [Vacations!]
     }    
     type WeekDay {
         number: Int!
         hour: Int!
         minute: Int!
         duration: Int
+    }
+    type Vacations {
+        startTimeStamp: Int!
+        finishTimeStamp: Int!
     }
 `

@@ -12,13 +12,13 @@ type Props = {
     children: string
 }
 
-export default function ResultMessage(props: Props) {
+export default function RootDesc(props: Props) {
 
     const {children, className} = props
     const classes = useStyles()
 
     return (
-        <Typography className={classes.root + className ? " " + className : ""}>
+        <Typography className={classes.root + className ? " " + className : ""} align={"center"}>
             {children}
         </Typography>
     )

@@ -50,6 +50,10 @@ export default class TimeDate {
         return this._date.getMonth()
     }
 
+    get weekDay(): number {
+        return this._date.getDay()
+    }
+
     format(type: FormatType): string {
         const toString = value => (value < 10 ? "0" : "") + value
         switch (type) {
@@ -88,5 +92,10 @@ export default class TimeDate {
 
     earlierThan(timeDate: TimeDate): boolean {
         return this._date < timeDate.date
+    }
+
+    dayCountTo(timeDate: TimeDate): number {
+        const dayMS = 1000 * 60 * 60 * 24
+        return Math.floor(+timeDate.date / dayMS) - Math.floor(+this.date / dayMS) + 1
     }
 }
