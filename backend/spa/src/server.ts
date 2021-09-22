@@ -4,7 +4,8 @@ import {templateData} from "./config"
 const result = body => ({
     statusCode: 200,
     headers: {
-        "Content-Type": "text/html; charset=UTF-8"
+        "Content-Type": "text/html; charset=UTF-8",
+        "Cache-Control": "no-store"
     },
     body,
     isBase64Encoded: false

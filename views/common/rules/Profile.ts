@@ -14,6 +14,7 @@ export default class Profile {
     _appointment: Appointment | null
 
     constructor(data: ProfileData) {
+        console.log(data)
         this._name = data.name
         this._email = data.email
         this._appointment = Appointment.create(data.appointment)

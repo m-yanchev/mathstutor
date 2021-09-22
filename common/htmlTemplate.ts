@@ -4,7 +4,8 @@ type HTMLTemplateProps = {
     description: string,
     isNotStyles?: boolean,
     path: string,
-    cssString?: string
+    cssString?: string,
+    ver: number
 }
 
 const yandexMetrika = `
@@ -26,11 +27,12 @@ const yandexMetrika = `
 `
 
 export default function htmlTemplate(props?: HTMLTemplateProps) {
-    const {layout, title, description, isNotStyles, path, cssString} = props || {
+    const {layout, title, description, isNotStyles, path, cssString, ver} = props || {
         title: "В разработке",
         description: "Страница находится в разработке",
         path: "/form/dev-page/",
-        isNotStyles: true
+        isNotStyles: true,
+        ver: 1
     }
     return `
 <!doctype html>
@@ -46,7 +48,7 @@ export default function htmlTemplate(props?: HTMLTemplateProps) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="Description" content="${description}"/>
-    <script type="text/javascript" async defer src="${path}bundle.js"></script>
+    <script type="text/javascript" async defer src="${path}bundle${ver}.js"></script>
     ${!Boolean(isNotStyles) ? `<link href="${path}styles.css" rel="stylesheet"/>` : ""}
     ${Boolean(cssString) ? `<style id="jss-server-side">${cssString}</style>` : ""}
 </head>

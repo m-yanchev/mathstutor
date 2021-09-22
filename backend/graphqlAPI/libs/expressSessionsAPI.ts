@@ -11,19 +11,25 @@ export const useSession = app => {
         uri: DB_ACCESS,
         databaseName: 'mathsTutorDB',
         collection: 'sessions'
-    });
+    })
 
     store.on('error', function (e) {
         throw e
-    });
+    })
 
     const sessionConfig = {
         secret: SESSION_KEY,
         resave: false,
         saveUninitialized: false,
-        cookie: {maxAge: 31708800000, secure: true, domain: "mathstutor.ru"},
+        cookie: {
+            maxAge: 31708800000,
+            secure: true,
+            domain: "mathstutor.ru",
+            httpOnly: true,
+            sameSite: "none"
+        },
         store: store
-    };
+    }
 
     app.use(session(sessionConfig))
 }

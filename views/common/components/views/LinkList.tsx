@@ -1,5 +1,5 @@
 import React from "react";
-import {Link, List, ListItem, makeStyles} from "@material-ui/core";
+import {ListItem, List, ListItemText, makeStyles} from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
     item: {
@@ -20,14 +20,15 @@ export type Item = {
 export default function LinkList(props: Props) {
 
     const {items} = props
-
     const classes = useStyles()
 
     return (
         <List>
             {items.map(item =>
-                <ListItem className={classes.item} key={item.id} button disableGutters>
-                    <Link href={item.href} underline={"none"} variant={"button"}>{item.label}</Link>
+                <ListItem className={classes.item} key={item.id} component={"a"} href={item.href} button disableGutters>
+                    <ListItemText primaryTypographyProps={{variant: "button", color: "primary"}}>
+                        {item.label}
+                    </ListItemText>
                 </ListItem>)
             }
         </List>

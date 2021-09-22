@@ -6,7 +6,7 @@ type Props = {
     children: string,
 }
 
-export default function FormHeader(props: Props) {
+export default function Header(props: Props) {
 
     const {children, ...rest} = props
 

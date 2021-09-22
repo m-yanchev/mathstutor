@@ -2,7 +2,7 @@ const appointment = async (parent, args, context) => {
     const {mongoAPI} = context
     const {appointmentId} = parent
     const {findOne} = mongoAPI
-    return await findOne("appointments", {id: appointmentId})
+    return appointmentId ? await findOne("appointments", {id: appointmentId}) : null
 }
 
 export const resolvers = {

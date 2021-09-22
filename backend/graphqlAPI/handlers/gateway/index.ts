@@ -44,7 +44,7 @@ const expressAppFromMiddleware = middleware => {
 exports.handler = async (event, context) => {
     const server = await getServer()
     const cors = {
-        origin: 'https://mathstutor.ru',
+        origin: context.functionName === "graphql-api-dev-gateway" ? "https://localhost:9000" : 'https://mathstutor.ru',
         credentials: true
     }
     const h = server.createHandler({expressAppFromMiddleware, expressGetMiddlewareOptions: {cors}})

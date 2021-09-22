@@ -4,7 +4,7 @@ import UserNameInput from "../../common/components/views/UserNameInput";
 import EmailInput from "../../common/components/views/EmailInput";
 import NewPasswordInput from "../../common/components/smarts/NewPasswordInput";
 import ConfirmButton from "../../common/components/views/ConfirmButton";
-import FormHeader from "../../common/components/views/FormHeader";
+import Header from "../../common/components/views/Header";
 import Container from "../../common/components/views/Container";
 import AppBar from "../../common/components/views/AppBar";
 
@@ -44,7 +44,7 @@ export default function SignUpForm(props: Props) {
         <>
             <AppBar/>
             <Container>
-                <FormHeader className={classes.formHeader}>{REGISTRATION_HEADER}</FormHeader>
+                <Header className={classes.formHeader}>{REGISTRATION_HEADER}</Header>
                 <UserNameInput onConfirm={onConfirm}
                                onChange={value => onChange({name: "username", value})}/>
                 <EmailInput onConfirm={onConfirm} emailExist={emailExist}

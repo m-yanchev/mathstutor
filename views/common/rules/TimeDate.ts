@@ -34,6 +34,10 @@ export default class TimeDate {
         return this._date
     }
 
+    get timeStamp(): number {
+        return this._date.valueOf()
+    }
+
     get minute(): number {
         return this._date.getMinutes()
     }

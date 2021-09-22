@@ -6,12 +6,9 @@ describe("get", () => {
     test("Получить курс", async () => {
 
         const {get} = getDataSource(dbAPI)
-        const title = "Подготовка к ЕГЭ профильного уровня. 11 класс. Продвинутый уровень."
+        const title = "Подготовка к ЕГЭ профильного уровня. 10 - 11 класс. Начальный уровень: средний. 140 часов."
         const item = await get(title)
-        const result = {
-            title: "Подготовка к ЕГЭ профильного уровня. 11 класс. Продвинутый уровень.",
-            lessonTitles: ["Задания 13. Тригонометрические уравнения.", "Задания 17. Кредиты."]
-        }
-        await expect(item).toEqual(result)
+        const result = "Подготовка к ЕГЭ профильного уровня. 10 - 11 класс. Начальный уровень: средний. 140 часов."
+        await expect(item.title).toEqual(result)
     })
 })

@@ -22,6 +22,11 @@ type Vacation = {
     finishTimeStamp: number
 }
 
+type LessonItem = {
+    title: string,
+    date: TimeDate
+}
+
 export default class Appointment {
 
     _durations: Array<number>
@@ -29,8 +34,8 @@ export default class Appointment {
     _course: Course
 
     constructor(data: AppointmentData) {
-
-        const sortedWeekDays = data.weekDays.sort((a, b) =>
+        const weekDays = data.weekDays.slice()
+        const sortedWeekDays = weekDays.sort((a, b) =>
             (a.number < b.number ||
                 a.number === b.number && (a.hour < b.hour || a.hour === b.hour && a.minute < b.minute)) ? -1 : 1
         )
@@ -48,7 +53,8 @@ export default class Appointment {
         const getWeekDayIndex = lessonIndex => getIncompleteWeekLessonCount(startWeekDayIndex + lessonIndex)
         const getCompleteWeekCount = lessonCount => Math.floor(lessonCount / sortedWeekDays.length)
 
-        const preparedVacations = (data.vacations || []).sort((a, b) =>
+        const vacations = (data.vacations || []).slice()
+        const preparedVacations = vacations.sort((a, b) =>
             a.startTimeStamp < b.startTimeStamp ? -1 : 1
         ).map(vacation => {
             const startDate = TimeDate.createBySec(vacation.startTimeStamp)
@@ -92,6 +98,21 @@ export default class Appointment {
 
     static create(data: AppointmentData | null): Appointment | null {
         return data ? new Appointment(data) : null
+    }
+
+    comingLessons(nowDate: TimeDate): LessonItem[] {
+        const startIndex = this.nextLessonIndex(nowDate)
+        const dates = this._dates.slice(startIndex)
+        return startIndex !== -1 ? this._course.lessons.slice(startIndex).map((lesson, i) => (
+            {title: lesson.title, date: dates[i]}
+        )) : []
+    }
+
+    pastLessons(nowDate: TimeDate): LessonItem[] {
+        const finishedIndex = this.finishedLessonIndex(nowDate)
+        return this._course.lessons.slice(0, finishedIndex + 1).map((lesson, i) => (
+            {title: lesson.title, date: this._dates[i]}
+        ))
     }
 
     lessonDuration(lessonIndex: number): number {

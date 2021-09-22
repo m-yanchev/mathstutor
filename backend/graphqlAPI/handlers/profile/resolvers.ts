@@ -19,7 +19,11 @@ const sendLink = ({email, id, name}) => {
 const profile = async (parent, args, context) => {
     const {mongoAPI, userAPI} = context
     const {findOne} = mongoAPI
-    if (userAPI.user) return await findOne("users", userAPI.user)
+    if (userAPI.user && userAPI.user.id && userAPI.user.token) {
+        const user = await findOne("users", userAPI.user)
+        if (!user) return null
+        return user
+    }
     return null
 }
 

@@ -28,7 +28,7 @@ function InputValidation(props: InputValidationProps) {
 
     return (
         <FormTextField value={value} error={errorOrNotValid} helperText={helperText}
-                       onConfirm={handleConfirm} onBlur={handleBlur} onChange={handleChange}{...rest}/>
+                       onConfirm={handleConfirm} onBlur={handleBlur} onChange={handleChange} {...rest}/>
     )
 
     function handleConfirm(): void {

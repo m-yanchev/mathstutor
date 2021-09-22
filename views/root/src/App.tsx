@@ -4,7 +4,9 @@ import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apol
 import {CssBaseline} from "@material-ui/core";
 
 const link = createHttpLink({
-    uri: 'https://api.mathstutor.ru/gateway',
+    uri: process.env.NODE_ENV === "production" ?
+        'https://api.mathstutor.ru/gateway' :
+        'https://dev.mathstutor.ru/gateway',
     credentials: 'include'
 });
 
@@ -15,7 +17,6 @@ const client = new ApolloClient({
 
 
 function App() {
-
     return (
         <ApolloProvider client={client}>
             <CssBaseline/>

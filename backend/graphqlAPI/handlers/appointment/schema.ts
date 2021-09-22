@@ -1,8 +1,8 @@
 import {gql} from "apollo-server-lambda";
 
 export const typeDefs = gql`
-    extend type Profile @key(fields: "id"){
-        id: ID! @external
+    extend type Profile @key(fields: "appointmentId"){
+        appointmentId: ID @external
         appointment: Appointment
     }    
     type Appointment @key(fields: "courseTitle"){

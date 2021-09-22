@@ -1,0 +1,45 @@
+import React, {useState} from "react";
+import Appointment from "../../common/rules/Appointment";
+import FullScreenDialog from "../../common/components/views/FullScreenDialog";
+import ToggleButtonGroup from "../../common/components/views/ToggleButtonGroup";
+import TimeDate from "../../common/rules/TimeDate";
+import Table, {HeadCell} from "../../common/components/views/Table";
+
+type Props = {
+    open: boolean,
+    appointment: Appointment,
+    onClose: () => void
+}
+
+const HEAD_CELLS: HeadCell[] = [
+    {id: "date", label: "Дата занятия", align: "center", width: 90},
+    {id: "time", label: "Время занятия", align: "center", width: 90},
+    {id: "topic", label: "Тема урока", align: "left"}
+]
+
+export default function Program(props: Props) {
+
+    const {open, appointment, onClose} = props
+    const [state, setState] = useState<"coming" | "past">("coming")
+    const labels = ["Прошедшие занятия", "Предстоящие занятия"]
+
+    const handleToggleButtonClick = idx => {
+        setState(idx == 1 ? "coming" : "past")
+    }
+
+    const getRows = () => {
+        const nowDate = TimeDate.now
+        const rows = state === "coming" ? appointment.comingLessons(nowDate) : appointment.pastLessons(nowDate)
+        return rows.map(row => ({
+            id: String(row.date.timeStamp),
+            cells: [row.date.format("day.month"), row.date.format("hour:minute"), row.title]
+        }))
+    }
+
+    return (
+        <FullScreenDialog open={open} onClose={onClose} title={"Программа назначенного курса"}>
+            <ToggleButtonGroup defaultLabelIdx={1} labels={labels} onClick={handleToggleButtonClick}/>
+            <Table heads={HEAD_CELLS} rows={getRows()}/>
+        </FullScreenDialog>
+    )
+}

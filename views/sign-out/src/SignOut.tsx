@@ -22,7 +22,7 @@ export default function SignOut() {
 
     return (
         <>
-            <AppBar profile={true}/>
+            <AppBar profile={state !== "success"}/>
             <Container height={256}>
                 {state === "confirm" ?
                 <SignOutDialog onConfirm={handleConfirm}/> :

@@ -35,7 +35,6 @@ describe("Создание назначения без каникул", () => {
     })
 })
 
-/*
 const appointmentData = {
     startTimeStamp: 1630512000, // 01 сентября 19:00
     weekDays: [
@@ -254,4 +253,149 @@ describe("nextLessonFormatTime", () => {
         expect(appointment.nextLessonFormatTime(TimeDate.create(1634051143019), "hour:minute"))
             .toBe("18:00")
     })
-})*/
+})
+
+const allLessons = [
+    {title: "Задания 13", date: TimeDate.create(1630600200000)}, // 02 september, 19:30
+    {title: "Задания 14", date: TimeDate.create(1632236400000)}, // 21 september, 18:00
+    {title: "Задания 15", date: TimeDate.create(1634050800000)}, // 12 october, 18:00
+    {title: "Задания 16", date: TimeDate.create(1635865200000)}, // 02 november, 18:00
+    {title: "Задания 17", date: TimeDate.create(1636648200000)}, // 11 november, 19:30
+]
+
+describe("comingLessons", () => {
+
+    const appointment = Appointment.create(appointmentData)
+
+    test('Текущее время раньше начала первого урока. Должен вернуть "Задания 13, Задания 14, Задания 15", "Задания 16" и "Задания 17" с датами', () => {
+        const nowDate = TimeDate.create(1630494736123) // 01 september
+        const lessons = appointment.comingLessons(nowDate)
+        expect(lessons).toEqual(allLessons)
+    })
+
+    test('Текущее время во время первого урока. Должен вернуть "Задания 14", "Задания 15", "Задания 16" и "Задания 17" с датами', () => {
+        const nowDate = TimeDate.create(1630600523123) // 02 september 19:35
+        const lessons = appointment.comingLessons(nowDate)
+        const result = [
+            {title: "Задания 14", date: TimeDate.create(1632236400000)}, // 21 september, 18:00
+            {title: "Задания 15", date: TimeDate.create(1634050800000)}, // 12 october, 18:00
+            {title: "Задания 16", date: TimeDate.create(1635865200000)}, // 02 november, 18:00
+            {title: "Задания 17", date: TimeDate.create(1636648200000)}, // 11 november, 19:30
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время между вторым и третьим уроком. Должен вернуть "Задания 15", "Задания 16" и "Задания 17" с датами', () => {
+        const nowDate = TimeDate.create(1632414900453) // 23 september
+        const lessons = appointment.comingLessons(nowDate)
+        const result = [
+            {title: "Задания 15", date: TimeDate.create(1634050800000)}, // 12 october, 18:00
+            {title: "Задания 16", date: TimeDate.create(1635865200000)}, // 02 november, 18:00
+            {title: "Задания 17", date: TimeDate.create(1636648200000)}, // 11 november, 19:30
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время во время третьего урока. Должен вернуть "Задания 16" и "Задания 17" с датами', () => {
+        const nowDate = TimeDate.create(1634051143019) // 12 october 18:05
+        const lessons = appointment.comingLessons(nowDate)
+        const result = [
+            {title: "Задания 16", date: TimeDate.create(1635865200000)}, // 02 november, 18:00
+            {title: "Задания 17", date: TimeDate.create(1636648200000)}, // 11 november, 19:30
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время после третьего урока. Должен вернуть "Задания 16" и "Задания 17" с датами', () => {
+        const nowDate = TimeDate.create(1634054743019) // 12 october 19:05
+        const lessons = appointment.comingLessons(nowDate)
+        const result = [
+            {title: "Задания 16", date: TimeDate.create(1635865200000)}, // 02 november, 18:00
+            {title: "Задания 17", date: TimeDate.create(1636648200000)}, // 11 november, 19:30
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время во время четвертого урока. Должен вернуть "Задания 17" с датой', () => {
+        const nowDate = TimeDate.create(1635866143019) // 02 november 18:52
+        const lessons = appointment.comingLessons(nowDate)
+        const result = [
+            {title: "Задания 17", date: TimeDate.create(1636648200000)}, // 11 november, 19:30
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время после окончания пятого урока. Должен вернуть пустой массив', () => {
+        const nowDate = TimeDate.create(1636653763069) // 11 november 21:02
+        const lessons = appointment.comingLessons(nowDate)
+        const result = []
+        expect(lessons).toEqual(result)
+    })
+})
+
+describe("pastLessons", () => {
+
+    const appointment = Appointment.create(appointmentData)
+
+    test('Текущее время раньше начала первого урока. Должен вернуть Должен вернуть пустой массив', () => {
+        const nowDate = TimeDate.create(1630494736123) // 01 september
+        const lessons = appointment.pastLessons(nowDate)
+        const result = []
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время во время первого урока. Должен вернуть Должен вернуть пустой массив', () => {
+        const nowDate = TimeDate.create(1630600523123) // 02 september 19:35
+        const lessons = appointment.pastLessons(nowDate)
+        const result = []
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время между вторым и третьим уроком. Должен вернуть "Задания 13" и "Задания 14" с датами', () => {
+        const nowDate = TimeDate.create(1632414900453) // 23 september
+        const lessons = appointment.pastLessons(nowDate)
+        const result = [
+            {title: "Задания 13", date: TimeDate.create(1630600200000)}, // 02 september, 19:30
+            {title: "Задания 14", date: TimeDate.create(1632236400000)}, // 21 september, 18:00
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время во время третьего урока. Должен вернуть "Задания 13" и "Задания 14" с датами', () => {
+        const nowDate = TimeDate.create(1634051143019) // 12 october 18:05
+        const lessons = appointment.pastLessons(nowDate)
+        const result = [
+            {title: "Задания 13", date: TimeDate.create(1630600200000)}, // 02 september, 19:30
+            {title: "Задания 14", date: TimeDate.create(1632236400000)}, // 21 september, 18:00
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время после третьего урока. Должен вернуть "Задания 13", "Задания 14" и "Задания 15" с датами', () => {
+        const nowDate = TimeDate.create(1634054743019) // 12 october 19:05
+        const lessons = appointment.pastLessons(nowDate)
+        const result = [
+            {title: "Задания 13", date: TimeDate.create(1630600200000)}, // 02 september, 19:30
+            {title: "Задания 14", date: TimeDate.create(1632236400000)}, // 21 september, 18:00
+            {title: "Задания 15", date: TimeDate.create(1634050800000)}, // 12 october, 18:00
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время во время четвертого урока. Должен вернуть "Задания 13", "Задания 14" и "Задания 15" с датами', () => {
+        const nowDate = TimeDate.create(1635866143019) // 02 november 18:52
+        const lessons = appointment.pastLessons(nowDate)
+        const result = [
+            {title: "Задания 13", date: TimeDate.create(1630600200000)}, // 02 september, 19:30
+            {title: "Задания 14", date: TimeDate.create(1632236400000)}, // 21 september, 18:00
+            {title: "Задания 15", date: TimeDate.create(1634050800000)}, // 12 october, 18:00
+        ]
+        expect(lessons).toEqual(result)
+    })
+
+    test('Текущее время после окончания пятого урока. Должен вернуть "Задания 13, Задания 14, Задания 15", "Задания 16" и "Задания 17" с датами', () => {
+        const nowDate = TimeDate.create(1636653763069) // 11 november 21:02
+        const lessons = appointment.pastLessons(nowDate)
+        expect(lessons).toEqual(allLessons)
+    })
+})

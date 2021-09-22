@@ -1,5 +1,5 @@
 import React from "react";
-import {Link, Menu, MenuItem} from "@material-ui/core";
+import {Menu, MenuItem} from "@material-ui/core";
 
 type Props = {
     id: string,
@@ -27,13 +27,6 @@ export default function LinkMenu(props: Props) {
         setAnchorEl(null)
     }
 
-    const MenuLink = ({children, href, onClick}) =>
-        <MenuItem onClick={onClick}>
-            <Link href={href}>
-                {children}
-            </Link>
-        </MenuItem>
-
     return (
         <>
             <MenuButton onClick={handleClick} aria-controls={id} aria-haspopup/>
@@ -44,5 +37,19 @@ export default function LinkMenu(props: Props) {
                 )}
             </Menu>
         </>
+    )
+}
+
+function MenuLink({children, href, onClick}) {
+
+    const handleClick = () => {
+        //document.location.assign(href)
+        onClick()
+    }
+
+    return (
+        <MenuItem component={"a"} href={href} onClick={handleClick}>
+            {children}
+        </MenuItem>
     )
 }

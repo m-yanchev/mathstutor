@@ -2,7 +2,7 @@ import React from "react";
 import {makeStyles, Typography, Box} from "@material-ui/core";
 import UserNameInput from "../../common/components/views/UserNameInput";
 import ConfirmButton from "../../common/components/views/ConfirmButton";
-import FormHeader from "../../common/components/views/FormHeader";
+import Header from "../../common/components/views/Header";
 
 const useStyles = makeStyles({
     confirmButton: {
@@ -43,7 +43,7 @@ export default function ProfileForm(props: Props) {
 
     return (
         <>
-            <FormHeader className={classes.formHeader}>{HEADER}</FormHeader>
+            <Header className={classes.formHeader}>{HEADER}</Header>
             <UserNameInput defaultValue={userName} onConfirm={onConfirm}
                            onChange={value => onChange({name: "username", value})}/>
             <Box className={classes.emailBox}>

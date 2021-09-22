@@ -25,6 +25,7 @@ module.exports = folder => ({
     devServer: {
         contentBase: path.join(__dirname, folder, 'devDist'),
         compress: true,
+        https: true,
         port: 9000,
     },
     plugins: [

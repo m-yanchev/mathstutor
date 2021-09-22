@@ -50,12 +50,13 @@ type Mutation {
 
 type Profile
   @join__owner(graph: PROFILE)
-  @join__type(graph: PROFILE, key: "id")
-  @join__type(graph: APPOINTMENT, key: "id")
+  @join__type(graph: PROFILE, key: "appointmentId")
+  @join__type(graph: APPOINTMENT, key: "appointmentId")
 {
   appointment: Appointment @join__field(graph: APPOINTMENT)
+  appointmentId: ID @join__field(graph: PROFILE)
   email: String! @join__field(graph: PROFILE)
-  id: ID! @join__field(graph: PROFILE)
+  emailConfirmed: Boolean @join__field(graph: PROFILE)
   name: String! @join__field(graph: PROFILE)
 }
 
