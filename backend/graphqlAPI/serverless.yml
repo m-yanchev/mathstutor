@@ -2,16 +2,7 @@ service: graphql-api
 package:
   patterns:
     - '!**'
-    - '!node_modules/**'
-    - '!libs/**'
-    - '!package.json'
-    - '!package-lock.json'
-    - '!supergraph.graphql'
-    - '!supergraph-config.yaml'
-    - '!tsconfig.json'
-    - '!libs.webpack.config.js'
-    - '!layers.serverless.yml'
-    - '!layers/**'
+    - '!**.test.*'
   individually: true
 plugins:
   - serverless-plugin-typescript
@@ -22,8 +13,8 @@ provider:
   timeout: 15
   lambdaHashingVersion: 20201221
   layers:
-    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:45
-    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:41
+    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:46
+    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:42
 functions:
   gateway:
     handler: handlers/gateway/index.handler
@@ -72,5 +63,35 @@ functions:
     events:
       - http:
           path: /course
+          method: post
+          cors: true
+  lesson:
+    handler: handlers/lesson/index.handler
+    package:
+      patterns:
+        - handlers/lesson/*
+    events:
+      - http:
+          path: /lesson
+          method: post
+          cors: true
+  test:
+    handler: handlers/test/index.handler
+    package:
+      patterns:
+        - handlers/test/*
+    events:
+      - http:
+          path: /test
+          method: post
+          cors: true
+  testResult:
+    handler: handlers/testResult/index.handler
+    package:
+      patterns:
+        - handlers/testResult/*
+    events:
+      - http:
+          path: /test-result
           method: post
           cors: true

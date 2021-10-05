@@ -24,6 +24,7 @@ export async function handler() {
         title: TITLE,
         description: DESC,
         path: "about",
-        cssString: sheets.toString()
+        cssString: sheets.toString(),
+        ver: 1
     }))
 }

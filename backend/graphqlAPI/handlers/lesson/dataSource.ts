@@ -1,5 +1,5 @@
-import {Course, DataSource} from "./resolvers";
-import type {DynamoNumber, DynamoNumberList, DynamoString} from "dynamoDBAPI";
+import {DataSource, Lesson} from "./resolvers";
+import type {DynamoNumber, DynamoString} from "dynamoDBAPI";
 
 type GetDataSource = (dbAPI: DbAPI) => DataSource
 type DbAPI = {
@@ -11,19 +11,19 @@ type Key = {
 type Item = {
     id: DynamoNumber,
     title: DynamoString,
-    lessonIdList: DynamoNumberList
+    finalTestId?: DynamoNumber
 }
 
 export const getDataSource: GetDataSource = (dbAPI) => {
 
     const {getItem} = dbAPI
 
-    const get = async (id: number) : Promise<Course> => {
-        const {title, lessonIdList} = await getItem("courses", {id: {N: String(id)}})
+    const get = async (id: number) : Promise<Lesson> => {
+        const {title, finalTestId} = await getItem("lessons", {id: {N: String(id)}})
         return {
             id,
             title: title.S,
-            lessonIdList: lessonIdList.L.map(id => Number(id.N))
+            finalTestId: finalTestId ? Number(finalTestId.N) : null
         }
     }
 

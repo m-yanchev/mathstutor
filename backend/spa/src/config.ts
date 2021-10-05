@@ -4,7 +4,7 @@ export const templateData = {
         title: "Репетитор по математике",
         description: "Сайт репетитора по математике Николая Юрьевича Янчева",
         isNotStyles: true,
-        ver: 1
+        ver: 3
     },
     profile: {
         path: "/form/profile/",
@@ -33,5 +33,12 @@ export const templateData = {
         description: "Выход из системы",
         isNotStyles: true,
         ver: 1
-    }
+    },
+    lesson: {
+        path: "/form/lesson/",
+        title: "Урок",
+        description: "Урок",
+        isNotStyles: true,
+        ver: 3
+    },
 }

@@ -4,6 +4,7 @@ import FullScreenDialog from "../../common/components/views/FullScreenDialog";
 import ToggleButtonGroup from "../../common/components/views/ToggleButtonGroup";
 import TimeDate from "../../common/rules/TimeDate";
 import Table, {HeadCell} from "../../common/components/views/Table";
+import {Link} from "@material-ui/core";
 
 type Props = {
     open: boolean,
@@ -29,10 +30,16 @@ export default function Program(props: Props) {
 
     const getRows = () => {
         const nowDate = TimeDate.now
-        const rows = state === "coming" ? appointment.comingLessons(nowDate) : appointment.pastLessons(nowDate)
-        return rows.map(row => ({
-            id: String(row.date.timeStamp),
-            cells: [row.date.format("day.month"), row.date.format("hour:minute"), row.title]
+        const lessonItems = state === "coming" ? appointment.comingLessons(nowDate) : appointment.pastLessons(nowDate)
+        return lessonItems.map(item => ({
+            id: String(item.lesson.id),
+            cells: [
+                item.date.format("day.month"),
+                item.date.format("hour:minute"),
+                state === "past" ?
+                    <Link href={`/form/lesson?id=${item.lesson.id}`}>{String(item.lesson.title)}</Link> :
+                    item.lesson.title
+            ]
         }))
     }
 

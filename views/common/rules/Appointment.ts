@@ -23,7 +23,7 @@ type Vacation = {
 }
 
 type LessonItem = {
-    title: string,
+    lesson: Lesson,
     date: TimeDate
 }
 
@@ -104,14 +104,14 @@ export default class Appointment {
         const startIndex = this.nextLessonIndex(nowDate)
         const dates = this._dates.slice(startIndex)
         return startIndex !== -1 ? this._course.lessons.slice(startIndex).map((lesson, i) => (
-            {title: lesson.title, date: dates[i]}
+            {lesson, date: dates[i]}
         )) : []
     }
 
     pastLessons(nowDate: TimeDate): LessonItem[] {
         const finishedIndex = this.finishedLessonIndex(nowDate)
         return this._course.lessons.slice(0, finishedIndex + 1).map((lesson, i) => (
-            {title: lesson.title, date: this._dates[i]}
+            {lesson, date: this._dates[i]}
         ))
     }
 

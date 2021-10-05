@@ -3,11 +3,16 @@ import {ApolloServer} from "apollo-server-lambda";
 import {buildSubgraphSchema} from "@apollo/federation";
 import type {DocumentNode} from "graphql";
 import {GetUserFromHeader, getUserFromHeaders} from "./userHeaders";
+import {User} from "./User";
 
 type Options = {
     typeDefs: DocumentNode,
     resolvers: any,
     dataSource?: any
+}
+
+export type UserAPI = {
+    user: User | null
 }
 
 const getUserFromHeader = (req): GetUserFromHeader => (name: string): string => req.headers[name]

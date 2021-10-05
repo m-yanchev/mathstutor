@@ -1,7 +1,5 @@
-import React from 'react';
-import Root from "./Root";
+import React, {ReactNode} from 'react';
 import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
-import {CssBaseline} from "@material-ui/core";
 
 const link = createHttpLink({
     uri: process.env.NODE_ENV === "production" ?
@@ -15,13 +13,17 @@ const client = new ApolloClient({
     link
 })
 
-function App() {
+type Props = {
+    children: ReactNode | ReactNode[]
+}
+
+export default function APIProvider(props: Props) {
+
+    const {children} = props
+
     return (
         <ApolloProvider client={client}>
-            <CssBaseline/>
-            <Root/>
+            {children}
         </ApolloProvider>
     )
 }
-
-export default App

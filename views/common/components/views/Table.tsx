@@ -1,6 +1,6 @@
-import React from "react"
+import React, {ReactNode} from "react"
 import {
-    TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Table as MUITable, makeStyles
+    TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Table as MUITable, makeStyles, Grid
 } from "@material-ui/core";
 
 const useState = makeStyles({
@@ -21,7 +21,7 @@ export type HeadCell = {
 }
 type Row = {
     id: string,
-    cells: string[]
+    cells: (string | ReactNode)[]
 }
 
 export default function Table(props: Props) {
@@ -41,7 +41,7 @@ export default function Table(props: Props) {
     };
 
     return (
-        <>
+        <Grid container direction={"column"}>
             <TableContainer>
                 <MUITable stickyHeader>
                     <TableHead>
@@ -68,6 +68,7 @@ export default function Table(props: Props) {
                     </TableBody>
                 </MUITable>
             </TableContainer>
+            {rows.length > 10 &&
             <TablePagination className={classes.pagination}
                              count={rows.length}
                              component={"div"}
@@ -76,6 +77,7 @@ export default function Table(props: Props) {
                              onPageChange={handleChangePage}
                              onRowsPerPageChange={handleChangeRowsPerPage}
                              rowsPerPageOptions={[10, 50, 100]}/>
-        </>
+            }
+        </Grid>
     )
 }

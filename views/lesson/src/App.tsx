@@ -1,7 +1,14 @@
 import React from 'react';
-import Root from "./Root";
 import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
 import {CssBaseline} from "@material-ui/core";
+import {ThemeProvider} from "@material-ui/core/styles";
+import getTheme from "../../common/theme";
+import AppBar from "../../common/components/views/AppBar";
+import LessonView from "./Lesson";
+
+type Props = {
+    id: number
+}
 
 const link = createHttpLink({
     uri: process.env.NODE_ENV === "production" ?
@@ -15,13 +22,19 @@ const client = new ApolloClient({
     link
 })
 
-function App() {
+function App(props: Props) {
+
+    const {id} = props
+
     return (
         <ApolloProvider client={client}>
             <CssBaseline/>
-            <Root/>
+            <ThemeProvider theme={getTheme()}>
+                <AppBar profile={true}/>
+                <LessonView id={id}/>
+            </ThemeProvider>
         </ApolloProvider>
     )
 }
 
-export default App
+export default App;

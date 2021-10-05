@@ -22,6 +22,7 @@ const normaliseFilter = filter => {
 const normaliseDocument = document => {
     if (document) {
         document.id = document._id.toString()
+        delete document._id
         return document
     } else {
         return null

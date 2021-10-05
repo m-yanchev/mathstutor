@@ -15,7 +15,8 @@
   "author": "Yanchev",
   "license": "ISC",
   "devDependencies": {
-    "serverless-plugin-typescript": "^1.1.9"
+    "serverless-plugin-typescript": "^1.2.0",
+    "webpack": "^5.56.1"
   },
   "dependencies": {
     "@vendia/serverless-express": "^4.3.10"

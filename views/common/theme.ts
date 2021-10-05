@@ -15,6 +15,10 @@ export default function getTheme() {
     theme.typography.h2.fontWeight = 500
     theme.typography.h2.fontFamily = '"Montserrat",sans-serif'
 
+    theme.typography.h3.fontSize = "1.0rem"
+    theme.typography.h3.fontWeight = 500
+    theme.typography.h3.fontFamily = '"Montserrat",sans-serif'
+
     theme.typography.h6.fontFamily = '"Montserrat",sans-serif'
 
     theme.typography.subtitle1.fontSize = "0.8rem"

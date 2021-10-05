@@ -33,7 +33,10 @@ const QUERY = gql`
                 }
                 course {
                     title
-                    lessonTitles
+                    lessons {
+                        id
+                        title
+                    }
                 }
             }
         }

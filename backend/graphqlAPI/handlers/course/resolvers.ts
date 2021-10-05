@@ -1,22 +1,23 @@
 type Parent = {
-    courseTitle: string
+    courseId: number
 }
 type Context = {
     dataSource: DataSource
 }
 export type DataSource = {
-    get: (title: string) => Promise<Course>
+    get: (id: number) => Promise<Course>
 }
 export type Course = {
+    id: number,
     title: string,
-    lessonTitles: Array<string>
+    lessonIdList: number[]
 }
 
 const course = (parent: Parent, args, context: Context) => {
     const {dataSource} = context
-    const title = parent.courseTitle
+    const id = parent.courseId
     const {get} = dataSource
-    return get(title)
+    return get(id)
 }
 
 export const resolvers = {
