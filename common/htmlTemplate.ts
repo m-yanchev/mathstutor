@@ -5,7 +5,8 @@ type HTMLTemplateProps = {
     isNotStyles?: boolean,
     path: string,
     cssString?: string,
-    ver: number
+    ver: number,
+    mathJaxServiceOn?: boolean
 }
 
 const yandexMetrika = `
@@ -26,13 +27,26 @@ const yandexMetrika = `
 <!-- /Yandex.Metrika counter -->
 `
 
+const mathJaxService = `
+<script>
+    MathJax = {
+        loader: {load: ['input/asciimath', 'output/chtml']}
+    }
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js">
+</script>
+`
+
 export default function htmlTemplate(props?: HTMLTemplateProps) {
-    const {layout, title, description, isNotStyles, path, cssString, ver} = props || {
+    const {layout, title, description, isNotStyles, path, cssString, ver, mathJaxServiceOn} = props || {
         title: "В разработке",
         description: "Страница находится в разработке",
         path: "/form/dev-page/",
         isNotStyles: true,
-        ver: 1
+        ver: 1,
+        mathJaxServiceOn: false
     }
     return `
 <!doctype html>
@@ -40,6 +54,7 @@ export default function htmlTemplate(props?: HTMLTemplateProps) {
 <head>
     <title>${title}</title>
     ${process.env.NODE_ENV === "production" ? yandexMetrika : ""}
+    ${mathJaxServiceOn ? mathJaxService : ""}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">

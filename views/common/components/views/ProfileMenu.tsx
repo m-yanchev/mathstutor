@@ -1,7 +1,7 @@
 import React from "react";
 import LinkMenu from "./LinkMenu";
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import {IconButton} from "@material-ui/core";
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import {IconButton} from "@mui/material";
 
 export default function ProfileMenu() {
 

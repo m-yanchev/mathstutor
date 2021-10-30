@@ -1,9 +1,9 @@
 import React from "react";
-import {Box, TextField} from "@material-ui/core";
+import {Box, TextField} from "@mui/material";
 
 export type AutoComplete = "email" | "new-password" | "current-password" | "username" | "off"
-export type Type = "email" | "password"
-export type Label = "Имя" | "Эл. адрес" | "Пароль" | "Новый пароль" | "Подтвердите пароль"
+export type Type = "email" | "password" | "text"
+export type Label = "Имя" | "Эл. адрес" | "Пароль" | "Новый пароль" | "Подтвердите пароль" | "Ответ"
 
 type Props = {
     id: string,
@@ -26,7 +26,7 @@ export default function FormTextField(props: Props) {
     const {onConfirm, onChange, ...rest} = props
 
     return (
-        <Box style={{minHeight: "110px"}}>
+        <Box sx={{minHeight: "110px"}}>
             <TextField onChange={handleChange} onKeyUp={handleKeyUp} variant={'outlined'} fullWidth margin="normal"
                        {...rest}/>
         </Box>

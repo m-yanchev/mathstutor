@@ -30,7 +30,7 @@ export default function MainForm(props: Props) {
 
     return (
         <>
-            <Header className={classes.formHeader}>{header}</Header>
+            <Header sx={{marginTop: "20px", marginBottom: "35px"}}>{header}</Header>
             {children}
             <ConfirmButton className={classes.confirmButton} disabled={confirmDisabled} onClick={onConfirm}>
                 {confirmButtonTitle}

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Accordion, AccordionDetails, AccordionSummary, Box, Link, makeStyles, Typography} from "@material-ui/core";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {Accordion, AccordionDetails, AccordionSummary, Box, Link, Typography} from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Table, {HeadCell} from "../../common/components/views/Table";
 import Test from "../../common/rules/Test";
 
@@ -11,24 +11,6 @@ const RESULT_HEAD_CELLS: HeadCell[] = [
     {id: "status", label: "Статус", align: "center"}
 ]
 
-const useStyles = makeStyles({
-    root: {
-        marginTop: "1rem",
-        width: "100%"
-    },
-    header: {
-        margin: "0 0 0.4rem 16px"
-    },
-    runLink: {
-        marginLeft: "16px",
-        display: "block",
-        padding: "12px 0"
-    },
-    results: {
-        height: "2rem"
-    }
-})
-
 type Props = {
     test: Test
 }
@@ -36,7 +18,6 @@ type Props = {
 export default function FinalTest(props: Props) {
 
     const {test} = props
-    const classes = useStyles()
 
     const resultRows = test.results.map(result => ({
         id: String(result.date.timeStamp),
@@ -49,12 +30,16 @@ export default function FinalTest(props: Props) {
     }))
 
     return (
-        <Box className={classes.root}>
-            <Typography className={classes.header} variant={"h3"}>Итоговый тест:</Typography>
-            <Link className={classes.runLink} href={`/test-execution?id=${test.id}`} variant={"body1"}>Выполнить</Link>
+        <Box sx={{marginTop: "1rem", width: "100%"}}>
+            <Typography sx={{margin: "0 0 0.4rem 16px"}} variant={"h3"}>Итоговый тест:</Typography>
+            <Link sx={{marginLeft: "16px", display: "block", padding: "12px 0"}}
+                  href={`/form/test?id=${test.id}`}
+                  variant={"body1"}>
+                {"Выполнить"}
+            </Link>
             {test.results.length > 0 &&
             <Accordion>
-                <AccordionSummary className={classes.results} expandIcon={<ExpandMoreIcon/>}>
+                <AccordionSummary sx={{height: "2rem"}} expandIcon={<ExpandMoreIcon/>}>
                     <Typography>Результаты:</Typography>
                 </AccordionSummary>
                 <AccordionDetails>

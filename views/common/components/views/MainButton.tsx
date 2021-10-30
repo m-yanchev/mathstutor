@@ -1,12 +1,5 @@
 import React from "react";
-import {Button, makeStyles} from "@material-ui/core";
-
-const useStyles = makeStyles(() => ({
-    button: {
-        margin: "1rem 0 0 0",
-        height: "2rem"
-    }
-}))
+import {Button} from "@mui/material";
 
 type Props = {
     children: string | Element
@@ -15,12 +8,11 @@ type Props = {
 
 export default function MainButton(props: Props) {
 
-    const classes = useStyles()
-
     const {children, onClick} = props
 
     return (
-        <Button className={classes.button} fullWidth onClick={onClick} variant={"outlined"} color={"primary"}>
+        <Button fullWidth onClick={onClick} variant={"outlined"} color={"primary"}
+                sx={{margin: "1rem 0 0 0", height: "2rem"}}>
             {children}
         </Button>
     )

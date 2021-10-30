@@ -12,10 +12,6 @@ const useStyles = makeStyles({
     confirmButton: {
         marginTop: 20,
         marginBottom: 20
-    },
-    formHeader: {
-        marginTop: 20,
-        marginBottom: 35
     }
 })
 
@@ -44,7 +40,7 @@ export default function SignUpForm(props: Props) {
         <>
             <AppBar/>
             <Container>
-                <Header className={classes.formHeader}>{REGISTRATION_HEADER}</Header>
+                <Header sx={{marginTop: "20px", marginBottom: "35 px"}}>{REGISTRATION_HEADER}</Header>
                 <UserNameInput onConfirm={onConfirm}
                                onChange={value => onChange({name: "username", value})}/>
                 <EmailInput onConfirm={onConfirm} emailExist={emailExist}

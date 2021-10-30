@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography} from "@material-ui/core";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
 import {InputMask} from "primereact/inputmask";
 import {yandexMetrica} from "./yandexMetrica";
 

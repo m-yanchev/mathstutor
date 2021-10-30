@@ -23,3 +23,7 @@ subgraphs:
     routing_url: https://dev.mathstutor.ru/test-result
     schema:
       subgraph_url: https://dev.mathstutor.ru/test-result
+  problem:
+    routing_url: https://dev.mathstutor.ru/problem
+    schema:
+      subgraph_url: https://dev.mathstutor.ru/problem

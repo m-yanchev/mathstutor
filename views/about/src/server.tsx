@@ -1,8 +1,8 @@
 import React from "react";
-import {ServerStyleSheets} from "@material-ui/core/styles";
 import ReactDOMServer from "react-dom/server";
 import htmlTemplate from "../../../common/htmlTemplate";
 import App from "./App";
+import {ServerStyleSheets} from "@mui/styles";
 
 const TITLE = "Репетитор по математике"
 const DESC = "Обо мне. Об уроках. Отзывы. Контакты."
@@ -23,8 +23,8 @@ export async function handler() {
         layout,
         title: TITLE,
         description: DESC,
-        path: "about",
+        path: "/about/",
         cssString: sheets.toString(),
-        ver: 1
+        ver: 2
     }))
 }

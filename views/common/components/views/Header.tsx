@@ -1,8 +1,8 @@
 import React from "react";
-import {Typography} from "@material-ui/core";
+import {Typography} from "@mui/material";
 
 type Props = {
-    className?: string,
+    sx?: any,
     children: string,
     title?: string
 }

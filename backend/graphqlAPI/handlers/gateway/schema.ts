@@ -41,12 +41,23 @@ type Course
   title: String! @join__field(graph: COURSE)
 }
 
+type Exercise
+  @join__owner(graph: TEST)
+  @join__type(graph: TEST, key: "problemId")
+  @join__type(graph: PROBLEM, key: "problemId")
+{
+  problem: Problem! @join__field(graph: PROBLEM)
+  problemId: ID! @join__field(graph: TEST)
+  withDetailedAnswer: Boolean @join__field(graph: TEST)
+}
+
 scalar join__FieldSet
 
 enum join__Graph {
   APPOINTMENT @join__graph(name: "appointment" url: "https://dev.mathstutor.ru/appointment")
   COURSE @join__graph(name: "course" url: "https://dev.mathstutor.ru/course")
   LESSON @join__graph(name: "lesson" url: "https://dev.mathstutor.ru/lesson")
+  PROBLEM @join__graph(name: "problem" url: "https://dev.mathstutor.ru/problem")
   PROFILE @join__graph(name: "profile" url: "https://dev.mathstutor.ru/profile")
   TEST @join__graph(name: "test" url: "https://dev.mathstutor.ru/test")
   TESTRESULT @join__graph(name: "testResult" url: "https://dev.mathstutor.ru/test-result")
@@ -66,6 +77,20 @@ type Lesson
 type Mutation {
   signUp(email: String!, name: String!, password: String!): ProfileResult! @join__field(graph: PROFILE)
   updateProfile(name: String!): ProfileResult! @join__field(graph: PROFILE)
+  writeResult(answer: String!, msTestResultTimeStamp: String, problemId: String!, testId: ID!): WriteResultResponse! @join__field(graph: TESTRESULT)
+}
+
+type Problem {
+  answer: String
+  desc: String!
+  id: ID!
+}
+
+type ProblemResult {
+  msTestResultTimeStamp: String!
+  msTimeStamp: String!
+  percentage: Int!
+  userId: String!
 }
 
 type Profile
@@ -92,6 +117,7 @@ type ProfileResult {
 type Query {
   lesson(id: ID!): Lesson @join__field(graph: LESSON)
   profile: Profile @join__field(graph: PROFILE)
+  test(id: ID!): Test @join__field(graph: TEST)
 }
 
 type Test
@@ -99,13 +125,17 @@ type Test
   @join__type(graph: TEST, key: "id")
   @join__type(graph: TESTRESULT, key: "id")
 {
+  exercises: [Exercise!]! @join__field(graph: TEST)
   id: ID! @join__field(graph: TEST)
   results: [TestResult!]! @join__field(graph: TESTRESULT)
 }
 
 type TestResult {
-  percent: Int!
-  timeStamp: Int!
+  finishedTimeStamp: Int
+  msTimeStamp: String!
+  percentage: Int!
+  testId: Int!
+  userId: String!
 }
 
 type Vacations {
@@ -118,5 +148,10 @@ type WeekDay {
   hour: Int!
   minute: Int!
   number: Int!
+}
+
+type WriteResultResponse {
+  problemResult: ProblemResult
+  testResult: TestResult
 }
 `

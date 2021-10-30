@@ -6,17 +6,6 @@ import 'primeflex/primeflex.css';
 import "./LandingPage.css"
 import {ScrollPanel} from "primereact/scrollpanel";
 import {Divider} from "primereact/divider";
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle, IconButton, Link, Menu, MenuItem,
-    Toolbar, Box, Card, CardContent,
-    Typography, Grid, Hidden, Slide, useScrollTrigger, CardHeader, CardActions
-} from "@material-ui/core";
-import MenuIcon from '@material-ui/icons/Menu';
-import {makeStyles} from '@material-ui/core/styles';
 import {InputMask} from 'primereact/inputmask';
 import AppBar from "../../common/components/views/AppBar";
 import {LOGO} from "../../common/constants";
@@ -24,52 +13,21 @@ import CallbackDialog from "./CallbackDialog";
 import {ErrorSnackbar} from "../../common/components/views/ErrorSnackbar";
 import {yandexMetrica} from "./yandexMetrica";
 import LinkMenu from "../../common/components/views/LinkMenu";
+import {
+    Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem, Toolbar, Box, Card, CardContent, Grid, Hidden,
+    Slide, useScrollTrigger, CardActions, Button, CardHeader, IconButton, Link, Typography
+} from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
 
 const FAILED_MESSAGE = "Извините, не получилось передать номер телефона Николай Юрьевичу. Попробуйте повторить ещё раз."
 const PATH = "about"
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        paddingTop: "64px"
-    },
-    toolbarLink: {
-        padding: "0.4rem"
-    },
-    toolbarLinks: {
-        width: "33rem"
-    },
-    profiLink: {
-        marginLeft: "1rem"
-    },
-    sectionH: {
-        margin: "0 0 1rem 16px"
-    },
-    section: {
-        padding: "4rem 2rem 0 2rem"
-    },
-    price: {
-    },
-    personCount: {
-    },
-    p: {
-        padding: "0 1rem",
-        marginBottom: "1rem",
-        lineHeight: 2
-    },
-    cardContent: {
-        height: "12rem"
-    },
-    cardTitle: {
-        height: "3.25rem"
-    }
-}));
 
 type TextProps = {
     children: ReactNode
 }
 
 type AProps = {
-    className?: string,
+    sx?: any,
     href: string,
     children: ReactNode,
     target?: string
@@ -77,14 +35,12 @@ type AProps = {
 
 function MenuBar() {
 
-    const classes = useStyles()
-
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const items = [
         {id: "about-me", href: `/${PATH}/#about-me`, label: "Обо мне"},
         {id: "about-lessons", href: `/${PATH}/#about-lessons`, label: "Об уроках"},
-        {id: "first-lesson", href: `/${PATH}/#first-lesson`, label: "Первый урок"},
+        // {id: "first-lesson", href: `/${PATH}/#first-lesson`, label: "Первый урок"},
         {id: "formats", href: `/${PATH}/#formats`, label: "Форматы"},
         {id: "reviews", href: `/${PATH}/#reviews`, label: "Отзывы"},
         {id: "contacts", href: `/${PATH}/#contacts`, label: "Контакты"},
@@ -107,7 +63,7 @@ function MenuBar() {
         </MenuItem>
 
     const ToolbarLink = ({children, href}) =>
-        <Link className={classes.toolbarLink} href={href} color={"inherit"} variant={"subtitle2"}>
+        <Link sx={{padding: "0.4rem"}} href={href} color={"inherit"} variant={"subtitle2"}>
             {children}
         </Link>
 
@@ -118,14 +74,12 @@ function MenuBar() {
 
     return (
         <AppBar>
-            <Hidden mdUp>
-                <LinkMenu id={"app-menu"} items={items} MenuButton={MenuButton}/>
-            </Hidden>
-            <Hidden smDown>
-                <Grid className={classes.toolbarLinks} container>
-                    {items.map(item => <ToolbarLink key={item.id} href={item.href}>{item.label}</ToolbarLink>)}
-                </Grid>
-            </Hidden>
+            <LinkMenu sx={{display: {xs: "block", sm: "block", md: "none", lg: "none", xl: "none"}}} id={"app-menu"}
+                      items={items} MenuButton={MenuButton}/>
+            <Grid sx={{display: {xs: "none", sm: "none", md: "block", lg: "block", xl: "block"}, width: "33rem"}}
+                  container>
+                {items.map(item => <ToolbarLink key={item.id} href={item.href}>{item.label}</ToolbarLink>)}
+            </Grid>
         </AppBar>
     )
 }
@@ -134,7 +88,6 @@ function LandingPage() {
 
     const [callbackDialogOpen, setCallbackDialogOpen] = useState(false)
     const [failedMessage, setFailedMessage] = useState(null)
-    const classes = useStyles()
 
     const handleOpenCallbackDialog = () => {
         setCallbackDialogOpen(true)
@@ -148,11 +101,11 @@ function LandingPage() {
     const handleSuccess = () => setFailedMessage(null)
 
     const H = (props: TextProps) =>
-        <Typography className={classes.sectionH} variant={"h1"}>
+        <Typography sx={{margin: "0 0 1rem 16px"}} variant={"h1"}>
             {props.children}
         </Typography>
     const P = (props: TextProps) =>
-        <Typography className={classes.p}>
+        <Typography sx={{padding: "0 1rem", marginBottom: "1rem", lineHeight: 2}}>
             {props.children}
         </Typography>
     const A = ({children, ...rest}: AProps) =>
@@ -160,7 +113,7 @@ function LandingPage() {
             <b>{children}</b>
         </Link>
     const SimpleSection = ({id, title, children}) =>
-        <Box id={id} className={classes.section}>
+        <Box id={id} sx={{padding: "4rem 2rem 0 2rem"}}>
             <H>{title}</H>
             {children}
         </Box>
@@ -170,10 +123,10 @@ function LandingPage() {
         </Button>
     const CardSubtitle = ({price, personCountDesc}) =>
         <>
-            <Typography className={classes.price} variant={"subtitle1"} color={"secondary"}>
+            <Typography variant={"subtitle1"} color={"secondary"}>
                 {`${price} руб/час`}
             </Typography>
-            <Typography className={classes.personCount} variant={"subtitle1"}>
+            <Typography variant={"subtitle1"}>
                 {personCountDesc}
             </Typography>
         </>
@@ -187,9 +140,9 @@ function LandingPage() {
             <Card raised>
                 <CardHeader title={title}
                             subheader={<CardSubtitle price={price} personCountDesc={subtitle}/>}
-                            titleTypographyProps={{variant: "h2", component: "h2", className: classes.cardTitle}}/>
+                            titleTypographyProps={{variant: "h2", component: "h2", sx: {height: "3.25rem"}}}/>
                 <CardContent>
-                    <ScrollPanel className={classes.cardContent + " bar"}>
+                    <ScrollPanel className={"bar"} style={{height: "12rem"}}>
                         <Typography variant={"body2"}>{children}</Typography>
                     </ScrollPanel>
                 </CardContent>
@@ -200,7 +153,7 @@ function LandingPage() {
     return (
         <>
             <MenuBar/>
-            <Box className={classes.root}>
+            <Box sx={{paddingTop: "64px"}}>
                 <SimpleSection id={"about-me"} title={"Обо мне"}>
                     <div className={"p-grid"}>
                         <div className={"p-col-12 p-md-6 p-lg-4 p-px-3 p-align-center p-grid my-photo"}>
@@ -251,7 +204,7 @@ function LandingPage() {
                     </P>
                     <ActionButton>Записаться</ActionButton>
                 </SimpleSection>
-                <SimpleSection id={"first-lesson"} title={"О первом занятии"}>
+                {/*<SimpleSection id={"first-lesson"} title={"О первом занятии"}>
                     <P>
                         {'Первое занятие '}
                         <b>{'абсолютно бесплатно'}</b>
@@ -262,7 +215,7 @@ function LandingPage() {
                         'курс. Помогаю зарегистрироваться и настроить работу в необходимых веб приложениях.'}
                     </P>
                     <ActionButton>Договориться о времени</ActionButton>
-                </SimpleSection>
+                </SimpleSection>*/}
                 <SimpleSection id={"formats"} title={"Форматы и цены"}>
                     <div id={"formats"} className={"p-grid p-jc-between cards"}>
                         <FormatCard title={"Индивидуальные занятия"} subtitle={"1 ученик"} price={1500}>
@@ -299,7 +252,7 @@ function LandingPage() {
                         'моей анкетой уже накопилось достаточное их количество. Нажимайте на ссылку и читайте, ' +
                         'что пишут о моих занятиях.'}
                     </P>
-                    <A className={classes.profiLink} href={"https://profi.ru/profile/YanchevNU/#reviews-tab"}
+                    <A sx={{marginLeft: "1rem"}} href={"https://profi.ru/profile/YanchevNU/#reviews-tab"}
                        target={"_blank"}>
                         {"Отзывы на Profi.ru"}
                     </A>

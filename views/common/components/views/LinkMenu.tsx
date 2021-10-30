@@ -1,10 +1,11 @@
 import React from "react";
-import {Menu, MenuItem} from "@material-ui/core";
+import {Menu, MenuItem} from "@mui/material";
 
 type Props = {
     id: string,
     items: Array<Item>,
-    MenuButton: any
+    MenuButton: any,
+    sx?: any
 }
 
 type Item = {
@@ -15,7 +16,7 @@ type Item = {
 
 export default function LinkMenu(props: Props) {
 
-    const {id, items, MenuButton} = props
+    const {id, items, MenuButton, sx} = props
 
     const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -29,7 +30,7 @@ export default function LinkMenu(props: Props) {
 
     return (
         <>
-            <MenuButton onClick={handleClick} aria-controls={id} aria-haspopup/>
+            <MenuButton onClick={handleClick} aria-controls={id} aria-haspopup sx={sx}/>
             <Menu id={id} anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)}
                   onClose={handleClose}>
                 {items.map(item =>

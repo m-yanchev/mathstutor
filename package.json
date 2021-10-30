@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "compile about": "tsc --build views/about/tsconfig.json views/common/tsconfig.json",
     "start about": "webpack serve --config views/about/dev.webpack.config.js --open",
     "build about server": "webpack --config views/about/server.webpack.config.js && cd views/about/serverDist/ && zip about.zip about.js",
     "build about client": "webpack --config views/about/client.webpack.config.js",
@@ -22,7 +21,9 @@
     "start dev-page": "webpack serve --config views/dev-page/dev.webpack.config.js --open",
     "build dev-page client": "webpack --config views/dev-page/prod.webpack.config.js",
     "start lesson": "webpack serve --config views/lesson/dev.webpack.config.js --open",
-    "build lesson client": "webpack --config views/lesson/prod.webpack.config.js"
+    "build lesson client": "webpack --config views/lesson/prod.webpack.config.js",
+    "start test": "webpack serve --config views/test/dev.webpack.config.js --open",
+    "build test client": "webpack --config views/test/prod.webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -61,7 +62,8 @@
     "@material-ui/core": "^4.12.1",
     "@material-ui/icons": "^4.11.2",
     "@mui/icons-material": "^5.0.0",
-    "@mui/material": "^5.0.0",
+    "@mui/material": "^5.0.4",
+    "@mui/styles": "^5.0.2",
     "babel-preset-react-app": "^3.1.2",
     "graphql": "^15.5.3",
     "primeflex": "^2.0.0",
@@ -70,5 +72,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "serverless-plugin-typescript": "^1.1.9"
+  },
+  "jest": {
+    "testTimeout": 10000
   }
 }

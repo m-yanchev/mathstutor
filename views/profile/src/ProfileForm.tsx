@@ -9,10 +9,6 @@ const useStyles = makeStyles({
         marginTop: 20,
         marginBottom: 20
     },
-    formHeader: {
-        marginTop: 20,
-        marginBottom: 35
-    },
     emailBox: {
         paddingLeft: 14,
         minHeight: 80
@@ -43,7 +39,7 @@ export default function ProfileForm(props: Props) {
 
     return (
         <>
-            <Header className={classes.formHeader}>{HEADER}</Header>
+            <Header sx={{marginTop: "20px", marginBottom: "35px"}}>{HEADER}</Header>
             <UserNameInput defaultValue={userName} onConfirm={onConfirm}
                            onChange={value => onChange({name: "username", value})}/>
             <Box className={classes.emailBox}>

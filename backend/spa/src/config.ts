@@ -39,6 +39,14 @@ export const templateData = {
         title: "Урок",
         description: "Урок",
         isNotStyles: true,
-        ver: 3
+        ver: 4
     },
+    test: {
+        path: "/form/test/",
+        title: "Контрольная работа",
+        description: "Контрольная работа",
+        isNotStyles: true,
+        ver: 1,
+        mathJaxServiceOn: true
+    }
 }

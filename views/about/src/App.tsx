@@ -1,8 +1,7 @@
 import React from 'react';
 import LandingPage from "./LandingPage";
-import {ThemeProvider} from "@material-ui/core/styles";
 import getTheme from "../../common/theme";
-import {CssBaseline} from "@material-ui/core";
+import {ThemeProvider, CssBaseline} from "@mui/material";
 
 function App() {
 

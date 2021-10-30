@@ -3,8 +3,8 @@ import TimeDate from "./TimeDate";
 const PERCENT_LIMIT = 70
 
 export type TestResultData = {
-    timeStamp: number,
-    percent: number
+    msTimeStamp: string,
+    percentage: number
 }
 type ResultStatus = "зачтено" | "не зачтено"
 
@@ -15,8 +15,8 @@ export default class TestResult {
     _percent: number
 
     constructor(data: TestResultData) {
-        this._date = TimeDate.createBySec(data.timeStamp)
-        this._percent = data.percent
+        this._date = TimeDate.create(Number(data.msTimeStamp))
+        this._percent = data.percentage
     }
 
     static create(data: TestResultData) {

@@ -14,8 +14,8 @@ provider:
   timeout: 15
   lambdaHashingVersion: 20201221
   layers:
-    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:46
-    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:42
+    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:48
+    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:44
 functions:
   gateway:
     handler: handlers/gateway/index.handler
@@ -94,5 +94,15 @@ functions:
     events:
       - http:
           path: /test-result
+          method: post
+          cors: true
+  problem:
+    handler: handlers/problem/index.handler
+    package:
+      patterns:
+        - handlers/problem/*
+    events:
+      - http:
+          path: /problem
           method: post
           cors: true
