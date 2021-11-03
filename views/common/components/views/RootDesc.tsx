@@ -1,24 +1,18 @@
 import React from "react"
-import {Typography, makeStyles} from "@material-ui/core";
-
-const useStyles = makeStyles({
-    root: {
-        padding: "1rem 0"
-    }
-})
+import {Typography} from "@mui/material";
 
 type Props = {
-    className?: string,
+    sx?: any,
     children: string
 }
 
 export default function RootDesc(props: Props) {
 
-    const {children, className} = props
-    const classes = useStyles()
+    const {children} = props
+    const sx = {padding: "1rem 0", ...props.sx}
 
     return (
-        <Typography className={classes.root + className ? " " + className : ""} align={"center"}>
+        <Typography sx={sx} align={"center"}>
             {children}
         </Typography>
     )

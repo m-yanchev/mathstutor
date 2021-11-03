@@ -1,0 +1,14 @@
+.problem-desc {
+    font-family: 'Old Standard TT', serif;
+}
+
+.problem-desc table {
+    border-collapse: collapse;
+}
+
+.problem-desc th, .problem-desc td {
+    padding: 4px 8px;
+    border: 1px solid lightgrey;
+    text-align: center;
+    font-weight: normal;
+}

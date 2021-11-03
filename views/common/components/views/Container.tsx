@@ -1,35 +1,23 @@
 import React from "react";
-import {Container as MaterialContainer, Grid, makeStyles, Paper} from "@material-ui/core";
-
-const useStyles = makeStyles({
-    root: {
-        position: "absolute",
-        height: "100%",
-        width: "100%"
-    },
-    container: {
-        marginTop: 40
-    },
-    paper: {
-        padding: 32
-    }
-})
+import {Container as MaterialContainer, Grid, Paper} from "@mui/material";
 
 type Props = {
     height?: number,
-    children: any
+    children: any,
+    maxWidth?: MaxWidth
 }
+export type MaxWidth = "sm"
 
-export default function Container({children, height}: Props) {
+export default function Container(props: Props) {
 
-    const classes = useStyles()
+    const {children, height, maxWidth} = props
 
     return (
-        <Grid className={classes.root} container alignItems={"center"} justifyContent={"center"}>
-            <MaterialContainer className={classes.container} fixed maxWidth={"xs"} disableGutters>
+        <Grid sx={{position: "absolute", height: "100%", width: "100%"}} container
+              alignItems={"center"} justifyContent={"center"}>
+            <MaterialContainer sx={{marginTop: "64px"}} fixed maxWidth={maxWidth || "xs"} disableGutters>
                 <Paper elevation={3}>
-                    <Grid className={classes.paper} container alignItems={"stretch"}
-                          style={{minHeight: height}}>
+                    <Grid sx={{padding: "32px", minHeight: height}} container alignItems={"stretch"}>
                         {children}
                     </Grid>
                 </Paper>

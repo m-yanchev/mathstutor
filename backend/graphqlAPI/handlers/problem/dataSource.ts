@@ -10,7 +10,9 @@ type Key = {
 }
 export type Item = {
     id: DynamoNumber,
+    commonDesc?: DynamoString,
     desc: DynamoString,
+    imageAlt?: DynamoString,
     answer?: DynamoString
 }
 
@@ -19,10 +21,12 @@ export const getDataSource: GetDataSource = (dbAPI) => {
     const {getItem} = dbAPI
 
     const get = async (id: number) : Promise<Problem> => {
-        const {desc, answer} = await getItem("problems", {id: {N: String(id)}})
+        const {commonDesc, desc, imageAlt, answer} = await getItem("problems", {id: {N: String(id)}})
         return {
             id,
+            commonDesc: commonDesc ? commonDesc.S : null,
             desc: desc.S,
+            imageAlt: imageAlt ? imageAlt.S : null,
             answer: answer ? answer.S : null
         }
     }

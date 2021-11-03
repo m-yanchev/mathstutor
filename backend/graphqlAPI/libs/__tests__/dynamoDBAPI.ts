@@ -18,7 +18,7 @@ describe("getItems", () => {
     test("Получить список из 2-х результатов", async () => {
 
         const {getItems} = dbAPI
-        const testId = 1
+        const testId = 4
         const userId = "6148e012088bd4488dc3d6bf"
         const filter = {
             expression: "testId = :testId and userId = :userId",
@@ -27,13 +27,13 @@ describe("getItems", () => {
         const items = await getItems("testResults", filter)
         const result = [{
             percentage: {N: "80"},
-            msTimeStamp: {S: "1633089600123"},
-            testId: {N: "1"},
+            msTimeStamp: {S: "1633089600124"},
+            testId: {N: "4"},
             userId: {S: "6148e012088bd4488dc3d6bf"}
         }, {
             percentage: {N: "70"},
-            msTimeStamp: {S: "1633176000456"},
-            testId: {N: "1"},
+            msTimeStamp: {S: "1633176000457"},
+            testId: {N: "4"},
             userId: {S: "6148e012088bd4488dc3d6bf"},
             finishedTimeStamp: {N: "1633178240"}
         }]
@@ -81,7 +81,7 @@ describe("getItems", () => {
 
 const msTimeStamp = String(Date.now())
 const userId = "6130afa3fb7b31651e50e48f"
-const testId = 1
+const testId = 2
 const percent = 100
 const item = {
     msTimeStamp: {S: msTimeStamp},

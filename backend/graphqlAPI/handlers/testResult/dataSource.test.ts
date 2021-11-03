@@ -8,7 +8,6 @@ describe("get dataSource testResult", () => {
         const {getTestResults} = getDataSource(dbAPI)
         const filter = {userId: "6148e012088bd4488dc3d6bf", testId: 1}
         const items = await getTestResults(filter)
-        console.log(items)
         const result: TestResult[] = [{
             percentage: 80,
             msTimeStamp: "1633089600123",

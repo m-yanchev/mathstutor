@@ -2,3 +2,6 @@ User-agent: *
 Disallow: /form/sign-in
 Disallow: /form/sign-up
 Disallow: /form/replace-password
+Disallow: /form/test
+Disallow: /form/lesson
+Disallow: /form/profile

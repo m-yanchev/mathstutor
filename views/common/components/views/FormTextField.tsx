@@ -26,7 +26,7 @@ export default function FormTextField(props: Props) {
     const {onConfirm, onChange, ...rest} = props
 
     return (
-        <Box sx={{minHeight: "110px"}}>
+        <Box sx={{minHeight: "100px"}}>
             <TextField onChange={handleChange} onKeyUp={handleKeyUp} variant={'outlined'} fullWidth margin="normal"
                        {...rest}/>
         </Box>

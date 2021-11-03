@@ -21,7 +21,9 @@ const query = gql`
             exercises {
                 problem {
                     id
+                    commonDesc
                     desc
+                    imageAlt
                     answer
                 }
             }
@@ -73,7 +75,7 @@ export default function TestPage(props: Props) {
     }
 
     return (
-        <AppPage header={"Контрольная работа"} height={256}>
+        <AppPage header={"Контрольная работа"} height={256} containerProps={{maxWidth: "sm"}}>
             {dataState.loading || resultMutationState.loading ?
                 <Progress/> : testShowed ?
                     <TestView test={test} problemIndex={problemIndex} onConfirmAnswer={handleConfirmAnswer}/> :

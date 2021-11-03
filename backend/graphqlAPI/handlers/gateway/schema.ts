@@ -54,13 +54,13 @@ type Exercise
 scalar join__FieldSet
 
 enum join__Graph {
-  APPOINTMENT @join__graph(name: "appointment" url: "https://dev.mathstutor.ru/appointment")
-  COURSE @join__graph(name: "course" url: "https://dev.mathstutor.ru/course")
-  LESSON @join__graph(name: "lesson" url: "https://dev.mathstutor.ru/lesson")
-  PROBLEM @join__graph(name: "problem" url: "https://dev.mathstutor.ru/problem")
-  PROFILE @join__graph(name: "profile" url: "https://dev.mathstutor.ru/profile")
-  TEST @join__graph(name: "test" url: "https://dev.mathstutor.ru/test")
-  TESTRESULT @join__graph(name: "testResult" url: "https://dev.mathstutor.ru/test-result")
+  APPOINTMENT @join__graph(name: "appointment" url: "https://api.mathstutor.ru/appointment")
+  COURSE @join__graph(name: "course" url: "https://api.mathstutor.ru/course")
+  LESSON @join__graph(name: "lesson" url: "https://api.mathstutor.ru/lesson")
+  PROBLEM @join__graph(name: "problem" url: "https://api.mathstutor.ru/problem")
+  PROFILE @join__graph(name: "profile" url: "https://api.mathstutor.ru/profile")
+  TEST @join__graph(name: "test" url: "https://api.mathstutor.ru/test")
+  TESTRESULT @join__graph(name: "testResult" url: "https://api.mathstutor.ru/test-result")
 }
 
 type Lesson
@@ -82,8 +82,10 @@ type Mutation {
 
 type Problem {
   answer: String
+  commonDesc: String
   desc: String!
   id: ID!
+  imageAlt: String
 }
 
 type ProblemResult {

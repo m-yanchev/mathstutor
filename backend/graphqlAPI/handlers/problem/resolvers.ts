@@ -9,7 +9,9 @@ export type DataSource = {
 }
 export type Problem = {
     id: number,
+    commonDesc: string | null,
     desc: string,
+    imageAlt: string | null,
     answer: string | null
 }
 

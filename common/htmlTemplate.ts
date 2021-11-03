@@ -2,7 +2,7 @@ type HTMLTemplateProps = {
     layout?: string,
     title: string,
     description: string,
-    isNotStyles?: boolean,
+    stylesVer?: number,
     path: string,
     cssString?: string,
     ver: number,
@@ -37,16 +37,18 @@ const mathJaxService = `
 <script type="text/javascript" id="MathJax-script" async
         src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js">
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 `
 
 export default function htmlTemplate(props?: HTMLTemplateProps) {
-    const {layout, title, description, isNotStyles, path, cssString, ver, mathJaxServiceOn} = props || {
+    const {layout, title, description, stylesVer, path, cssString, ver, mathJaxServiceOn} = props || {
         title: "В разработке",
         description: "Страница находится в разработке",
         path: "/form/dev-page/",
-        isNotStyles: true,
         ver: 1,
-        mathJaxServiceOn: false
+        mathJaxServiceOn: false,
     }
     return `
 <!doctype html>
@@ -58,13 +60,12 @@ export default function htmlTemplate(props?: HTMLTemplateProps) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="Description" content="${description}"/>
     <script type="text/javascript" async defer src="${path}bundle${ver}.js"></script>
-    ${!Boolean(isNotStyles) ? `<link href="${path}styles.css" rel="stylesheet"/>` : ""}
+    ${Boolean(stylesVer) ? `<link href="${path}styles${stylesVer}.css" rel="stylesheet"/>` : ""}
     ${Boolean(cssString) ? `<style id="jss-server-side">${cssString}</style>` : ""}
 </head>
 <body>

@@ -9,7 +9,7 @@ describe("lesson", () => {
         const result = {
             id: 1,
             title: "Градусная и радианная мера на числовой окружности.",
-            finalTestId: 1
+            finalTestId: 100
         }
         const response = await resolvers.Query.lesson({}, args, context)
         await expect(response).toEqual(result)
@@ -23,7 +23,7 @@ describe("lessons", () => {
         const result = [{
             id: 1,
             title: "Градусная и радианная мера на числовой окружности.",
-            finalTestId: 1
+            finalTestId: 100
         }, {
             id: 2,
             title: "Определение множества значений по точкам на числовой окружности.",
