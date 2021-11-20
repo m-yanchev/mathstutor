@@ -1,4 +1,5 @@
 import {dbAPI} from "../dynamoDBAPI";
+import {testUsers} from "../accessConsts";
 
 describe("getItem", () => {
 
@@ -15,7 +16,7 @@ describe("getItem", () => {
 
 describe("getItems", () => {
 
-    test("Получить список из 2-х результатов", async () => {
+    test("Получить список из 2-х результатов для теста 1", async () => {
 
         const {getItems} = dbAPI
         const testId = 4
@@ -40,7 +41,47 @@ describe("getItems", () => {
         await expect(items).toEqual(result)
     })
 
-    test("Получить список из 1-ого результата для n.yanchev@yandex.ru", async () => {
+    test("Получить список из 5-ти результатов по юзеру", async () => {
+
+        const {getItems} = dbAPI
+        const studentId = testUsers.student.id
+        const filter = {
+            expression: "userId = :userId",
+            values: {":userId": {S: studentId}}
+        }
+        const items = await getItems("testResults", filter)
+        const result = [{
+            percentage: {N: "80"},
+            msTimeStamp: {S: "1633089600123"},
+            testId: {N: "1"},
+            userId: {S: studentId}
+        }, {
+            percentage: {N: "80"},
+            msTimeStamp: {S: "1633089600124"},
+            testId: {N: "4"},
+            userId: {S: studentId}
+        }, {
+            percentage: {N: "70"},
+            msTimeStamp: {S: "1633176000456"},
+            testId: {N: "1"},
+            userId: {S: studentId},
+            finishedTimeStamp: {N: "1633178240"}
+        }, {
+            percentage: {N: "70"},
+            msTimeStamp: {S: "1633176000457"},
+            testId: {N: "4"},
+            userId: {S: studentId},
+            finishedTimeStamp: {N: "1633178240"}
+        }, {
+            percentage: {N: "60"},
+            msTimeStamp: {S: "1633262400123"},
+            testId: {N: "2"},
+            userId: {S: studentId}
+        }]
+        await expect(items).toEqual(result)
+    })
+
+    test("Получить список из 1-ого результата для n.yanchev@yandex.ru для теста 2", async () => {
 
         const {getItems} = dbAPI
         const testId = 2

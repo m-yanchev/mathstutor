@@ -24,7 +24,7 @@ export default function AppPage(props: Props) {
         <>
             <AppBar profile={Boolean(profile)}/>
             <Container height={height} {...containerProps}>
-                <Header title={title} sx={{marginLeft: "16px"}}>{header}</Header>
+                <Header title={title} sx={{margin: "0 16px 22px 16px"}}>{header}</Header>
                 {children}
             </Container>
         </>

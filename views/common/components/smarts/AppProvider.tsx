@@ -1,10 +1,10 @@
 import React, {ReactNode} from 'react';
 import APIProvider from "./APIProvider";
-import getTheme from "../../theme";
-import {ThemeProvider, CssBaseline} from "@mui/material";
+import StyledProvider from "./StyledProvider";
 
 type Props = {
     children: ReactNode | ReactNode[]
+    mocked?: any
 }
 
 export default function AppProvider(props: Props) {
@@ -13,10 +13,9 @@ export default function AppProvider(props: Props) {
 
     return (
         <APIProvider>
-            <CssBaseline/>
-            <ThemeProvider theme={getTheme()}>
+            <StyledProvider>
                 {children}
-            </ThemeProvider>
+            </StyledProvider>
         </APIProvider>
     )
 }

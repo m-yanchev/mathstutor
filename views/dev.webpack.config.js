@@ -2,11 +2,11 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = folder => ({
+module.exports = (folder, fileName) => ({
     mode: "development",
     devtool: 'inline-source-map',
     entry: {
-        bundle: path.join(__dirname, folder, "src/client.tsx")
+        bundle: path.join(__dirname, folder, fileName ? `src/${fileName}` : "src/client.tsx")
     },
     output: {
         path: path.join(__dirname, folder, "devDist"),

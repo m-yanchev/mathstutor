@@ -8,8 +8,12 @@ export default function MathProvider(props: Props) {
 
     const {children} = props
     useEffect(() => {
-        // @ts-ignore
-        window.MathJax.typeset()
+        try {
+            // @ts-ignore
+            MathJax.typeset()
+        } catch (e) {
+            console.error(e)
+        }
     })
 
     return children

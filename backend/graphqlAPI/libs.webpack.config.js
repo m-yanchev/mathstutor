@@ -6,6 +6,7 @@ module.exports = {
     entry: {
         expressSessionsAPI: path.join(__dirname, "/libs/expressSessionsAPI.ts"),
         mongoDBDataSource: path.join(__dirname, "/libs/mongoDBDataSource.ts"),
+        mongoUsersDataSource: path.join(__dirname, "/libs/mongoUsersDataSource.ts"),
         postTransportAPI: path.join(__dirname, "/libs/postTransportAPI.ts"),
         userHeaders: path.join(__dirname, "/libs/userHeaders.ts"),
         userToken: path.join(__dirname, "/libs/userToken.ts"),
@@ -17,7 +18,11 @@ module.exports = {
         library: {type: "commonjs"}
     },
     resolve: {
-        extensions: [".ts", ".js"]
+        extensions: [".ts", ".js"],
+        alias: {
+            Utilities: path.resolve(__dirname, 'src/utilities/'),
+            Templates: path.resolve(__dirname, 'src/templates/'),
+        },
     },
     module: {
         rules: [
@@ -26,6 +31,7 @@ module.exports = {
         ],
     },
     externals: {
+        "mongoDBDataSource": "commonjs mongoDBDataSource",
         "express-session": "commonjs express-session",
         "connect-mongodb-session": "commonjs connect-mongodb-session",
         "mongodb": "commonjs mongodb",

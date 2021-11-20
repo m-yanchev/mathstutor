@@ -1,13 +1,7 @@
 import React, {ReactNode} from "react"
 import {
-    TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Table as MUITable, makeStyles, Grid
-} from "@material-ui/core";
-
-const useState = makeStyles({
-    pagination: {
-        flexShrink: 0
-    }
-})
+    TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Table as MUITable, Grid
+} from "@mui/material";
 
 type Props = {
     heads: HeadCell[],
@@ -29,7 +23,6 @@ export default function Table(props: Props) {
     const {heads, rows} = props
     const [page, setPage] = React.useState<number>(0)
     const [rowsPerPage, setRowsPerPage] = React.useState<number>(10)
-    const classes = useState()
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -69,7 +62,7 @@ export default function Table(props: Props) {
                 </MUITable>
             </TableContainer>
             {rows.length > 10 &&
-            <TablePagination className={classes.pagination}
+            <TablePagination sx={{flexShrink: 0}}
                              count={rows.length}
                              component={"div"}
                              rowsPerPage={rowsPerPage}

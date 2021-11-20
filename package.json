@@ -23,7 +23,15 @@
     "start lesson": "webpack serve --config views/lesson/dev.webpack.config.js --open",
     "build lesson client": "webpack --config views/lesson/prod.webpack.config.js",
     "start test": "webpack serve --config views/test/dev.webpack.config.js --open",
-    "build test client": "webpack --config views/test/prod.webpack.config.js"
+    "build test client": "webpack --config views/test/prod.webpack.config.js",
+    "start students": "webpack serve --config views/students/dev.webpack.config.js --open",
+    "build students client": "webpack --config views/students/prod.webpack.config.js",
+    "start test-results": "webpack serve --config views/testResults/dev.webpack.config.js --open",
+    "build test-results client": "webpack --config views/testResults/prod.webpack.config.js",
+    "start problem-results": "webpack serve --config views/problemResults/dev.webpack.config.js --open",
+    "build problem-results client": "webpack --config views/problemResults/prod.webpack.config.js",
+    "start update-password": "webpack serve --config views/updatePassword/dev.webpack.config.js --open",
+    "build update-password client": "webpack --config views/updatePassword/prod.webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -64,6 +72,7 @@
     "@mui/icons-material": "^5.0.0",
     "@mui/material": "^5.0.4",
     "@mui/styles": "^5.0.2",
+    "apollo-server": "^3.5.0",
     "babel-preset-react-app": "^3.1.2",
     "graphql": "^15.5.3",
     "primeflex": "^2.0.0",

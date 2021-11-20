@@ -1,8 +1,8 @@
 subgraphs:
   profile:
-    routing_url: https://api.mathstutor.ru/profile
+    routing_url: https://api.mathstutor.ru/profiles
     schema:
-      subgraph_url: https://api.mathstutor.ru/profile
+      subgraph_url: https://api.mathstutor.ru/profiles
   appointment:
     routing_url: https://api.mathstutor.ru/appointment
     schema:
@@ -16,14 +16,14 @@ subgraphs:
     schema:
       subgraph_url: https://api.mathstutor.ru/lesson
   test:
-    routing_url: https://api.mathstutor.ru/test
+    routing_url: https://api.mathstutor.ru/tests
     schema:
-      subgraph_url: https://api.mathstutor.ru/test
+      subgraph_url: https://api.mathstutor.ru/tests
   testResult:
-    routing_url: https://api.mathstutor.ru/test-result
+    routing_url: https://api.mathstutor.ru/results
     schema:
-      subgraph_url: https://api.mathstutor.ru/test-result
+      subgraph_url: https://api.mathstutor.ru/results
   problem:
-    routing_url: https://api.mathstutor.ru/problem
+    routing_url: https://api.mathstutor.ru/problems
     schema:
-      subgraph_url: https://api.mathstutor.ru/problem
+      subgraph_url: https://api.mathstutor.ru/problems

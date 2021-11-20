@@ -1,8 +1,8 @@
 subgraphs:
   profile:
-    routing_url: https://dev.mathstutor.ru/profile
+    routing_url: https://dev.mathstutor.ru/profiles
     schema:
-      subgraph_url: https://dev.mathstutor.ru/profile
+      subgraph_url: https://dev.mathstutor.ru/profiles
   appointment:
     routing_url: https://dev.mathstutor.ru/appointment
     schema:
@@ -20,9 +20,9 @@ subgraphs:
     schema:
       subgraph_url: https://dev.mathstutor.ru/test
   testResult:
-    routing_url: https://dev.mathstutor.ru/test-result
+    routing_url: https://dev.mathstutor.ru/results
     schema:
-      subgraph_url: https://dev.mathstutor.ru/test-result
+      subgraph_url: https://dev.mathstutor.ru/results
   problem:
     routing_url: https://dev.mathstutor.ru/problem
     schema:

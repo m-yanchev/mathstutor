@@ -12,11 +12,12 @@ const useMongoDb = async method => {
 }
 
 const normaliseFilter = filter => {
-    if (filter.id) {
-        filter._id = new ObjectId(filter.id)
-        delete filter.id
+    const normal = {...filter}
+    if (normal.id) {
+        normal._id = new ObjectId(filter.id)
+        delete normal.id
     }
-    return filter
+    return normal
 }
 
 const normaliseDocument = document => {
@@ -33,6 +34,14 @@ export const findOne = async (model, filter) => {
     return useMongoDb(async (db: Db) => {
         const collection = await db.collection(model)
         return normaliseDocument(await collection.findOne(normaliseFilter(filter)))
+    })
+}
+
+export const find = async (model, filter) => {
+    return useMongoDb(async (db: Db) => {
+        const collection = await db.collection(model)
+        const list = await (await collection.find(normaliseFilter(filter))).toArray()
+        return list.map(document => normaliseDocument(document))
     })
 }
 

@@ -1,7 +1,10 @@
 import {POST_ACCESS} from "./accessConsts";
 import Mailer from "nodemailer";
+import {PostTransport, SendEmail} from "./PostTransport";
 
-export const sendEmail = async ({email, html, subject}) => {
+const sendEmail: SendEmail = async (props) => {
+
+    const {email, html, subject} = props
 
     const transporterProps = {
         host: POST_ACCESS.host,
@@ -35,3 +38,5 @@ export const sendEmail = async ({email, html, subject}) => {
         });
     })
 }
+
+export const postTransport: PostTransport = {sendEmail}

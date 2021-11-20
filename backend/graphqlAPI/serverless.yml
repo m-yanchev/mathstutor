@@ -13,8 +13,8 @@ provider:
   timeout: 15
   lambdaHashingVersion: 20201221
   layers:
-    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:48
-    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:44
+    - arn:aws:lambda:eu-central-1:477719599351:layer:libs:50
+    - arn:aws:lambda:eu-central-1:477719599351:layer:nodeModules:46
 functions:
   gateway:
     handler: handlers/gateway/index.handler
@@ -36,13 +36,13 @@ functions:
               - X-Amz-User-Agent
             allowCredentials: true
   profile:
-    handler: handlers/profile/index.handler
+    handler: handlers/profiles/index.handler
     package:
       patterns:
-        - handlers/profile/*
+        - handlers/profiles/*
     events:
       - http:
-          path: /profile
+          path: /profiles
           method: post
           cors: true
   appointment:
@@ -86,13 +86,13 @@ functions:
           method: post
           cors: true
   testResult:
-    handler: handlers/testResult/index.handler
+    handler: handlers/results/index.handler
     package:
       patterns:
-        - handlers/testResult/*
+        - handlers/results/*
     events:
       - http:
-          path: /test-result
+          path: /results
           method: post
           cors: true
   problem:
