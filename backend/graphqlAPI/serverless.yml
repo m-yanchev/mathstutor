@@ -10,7 +10,7 @@ provider:
   name: aws
   region: eu-central-1
   runtime: nodejs14.x
-  timeout: 15
+  timeout: 30
   lambdaHashingVersion: 20201221
   layers:
     - arn:aws:lambda:eu-central-1:477719599351:layer:libs:50

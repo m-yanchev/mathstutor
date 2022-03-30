@@ -17,6 +17,11 @@ directive @join__owner(graph: join__Graph!) on OBJECT | INTERFACE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
+enum Access {
+  student
+  tutor
+}
+
 type Appointment
   @join__owner(graph: APPOINTMENT)
   @join__type(graph: APPOINTMENT, key: "courseId")
@@ -33,22 +38,27 @@ type Appointment
 type Course
   @join__owner(graph: COURSE)
   @join__type(graph: COURSE, key: "lessonIdList")
-  @join__type(graph: LESSON, key: "lessonIdList")
+  @join__type(graph: LESSONS, key: "lessonIdList")
 {
   id: ID! @join__field(graph: COURSE)
   lessonIdList: [ID!]! @join__field(graph: COURSE)
-  lessons: [Lesson!]! @join__field(graph: LESSON)
+  lessons: [Lesson!]! @join__field(graph: LESSONS)
   title: String! @join__field(graph: COURSE)
 }
 
 type Exercise
-  @join__owner(graph: TEST)
-  @join__type(graph: TEST, key: "problemId")
-  @join__type(graph: PROBLEM, key: "problemId")
+  @join__owner(graph: TESTS)
+  @join__type(graph: TESTS, key: "problemId")
+  @join__type(graph: PROBLEMS, key: "problemId")
 {
-  problem: Problem! @join__field(graph: PROBLEM)
-  problemId: ID! @join__field(graph: TEST)
-  withDetailedAnswer: Boolean @join__field(graph: TEST)
+  maxEstimate: Int! @join__field(graph: TESTS)
+  problem: Problem! @join__field(graph: PROBLEMS)
+  problemId: ID! @join__field(graph: TESTS)
+  withDetailedAnswer: Boolean @join__field(graph: TESTS)
+}
+
+type Illus {
+  name: String
 }
 
 scalar join__FieldSet
@@ -56,29 +66,35 @@ scalar join__FieldSet
 enum join__Graph {
   APPOINTMENT @join__graph(name: "appointment" url: "https://api.mathstutor.ru/appointment")
   COURSE @join__graph(name: "course" url: "https://api.mathstutor.ru/course")
-  LESSON @join__graph(name: "lesson" url: "https://api.mathstutor.ru/lesson")
-  PROBLEM @join__graph(name: "problem" url: "https://api.mathstutor.ru/problems")
-  PROFILE @join__graph(name: "profile" url: "https://api.mathstutor.ru/profiles")
-  TEST @join__graph(name: "test" url: "https://api.mathstutor.ru/tests")
-  TESTRESULT @join__graph(name: "testResult" url: "https://api.mathstutor.ru/results")
+  LESSONS @join__graph(name: "lessons" url: "https://api.mathstutor.ru/lessons")
+  PROBLEMS @join__graph(name: "problems" url: "https://api.mathstutor.ru/problems")
+  PROFILES @join__graph(name: "profiles" url: "https://api.mathstutor.ru/profiles")
+  RESULTS @join__graph(name: "results" url: "https://api.mathstutor.ru/results")
+  TESTS @join__graph(name: "tests" url: "https://api.mathstutor.ru/tests")
 }
 
 type Lesson
-  @join__owner(graph: LESSON)
-  @join__type(graph: LESSON, key: "finalTestId")
-  @join__type(graph: TEST, key: "finalTestId")
+  @join__owner(graph: LESSONS)
+  @join__type(graph: LESSONS, key: "finalTestId")
+  @join__type(graph: LESSONS, key: "exampleIdList")
+  @join__type(graph: PROBLEMS, key: "exampleIdList")
+  @join__type(graph: TESTS, key: "finalTestId")
 {
-  finalTest: Test @join__field(graph: TEST)
-  finalTestId: ID @join__field(graph: LESSON)
-  id: ID! @join__field(graph: LESSON)
-  title: String! @join__field(graph: LESSON)
+  exampleIdList: [ID!]! @join__field(graph: LESSONS)
+  examples: [Problem!]! @join__field(graph: PROBLEMS)
+  finalTest: Test @join__field(graph: TESTS)
+  finalTestId: ID @join__field(graph: LESSONS)
+  id: ID! @join__field(graph: LESSONS)
+  isExamples: Boolean! @join__field(graph: LESSONS)
+  title: String! @join__field(graph: LESSONS)
 }
 
 type Mutation {
-  signUp(email: String!, name: String!, password: String!): ProfileResult! @join__field(graph: PROFILE)
-  updatePassword(password: String!): ProfileResult! @join__field(graph: PROFILE)
-  updateProfile(name: String!): ProfileResult! @join__field(graph: PROFILE)
-  writeResult(answer: String!, msTestResultTimeStamp: String, problemId: String!, testId: ID!): WriteResultResponse! @join__field(graph: TESTRESULT)
+  signUp(email: String!, name: String!, password: String!): ProfileResult! @join__field(graph: PROFILES)
+  updatePassword(password: String!): ProfileResult! @join__field(graph: PROFILES)
+  updateProfile(name: String!): ProfileResult! @join__field(graph: PROFILES)
+  updateResult(estimate: Int!, msProblemResultTimeStamp: String!, studentId: ID!): UpdateResponse! @join__field(graph: RESULTS)
+  writeResult(answer: String, exerciseIndex: Int!, msTestResultTimeStamp: String, problemId: ID!, testId: ID!): WriteResponse! @join__field(graph: RESULTS)
 }
 
 type Problem {
@@ -86,34 +102,37 @@ type Problem {
   commonDesc: String
   desc: String!
   id: ID!
-  imageAlt: String
+  illus: Illus
+  solution: Solution
 }
 
 type ProblemResult
-  @join__owner(graph: TESTRESULT)
-  @join__type(graph: TESTRESULT, key: "problemId")
-  @join__type(graph: PROBLEM, key: "problemId")
+  @join__owner(graph: RESULTS)
+  @join__type(graph: RESULTS, key: "problemId")
+  @join__type(graph: PROBLEMS, key: "problemId")
 {
-  answer: String! @join__field(graph: TESTRESULT)
-  msTestResultTimeStamp: String! @join__field(graph: TESTRESULT)
-  msTimeStamp: String! @join__field(graph: TESTRESULT)
-  percentage: Int! @join__field(graph: TESTRESULT)
-  problem: Problem! @join__field(graph: PROBLEM)
-  problemId: ID! @join__field(graph: TESTRESULT)
-  userId: String! @join__field(graph: TESTRESULT)
+  answer: String @join__field(graph: RESULTS)
+  estimate: Int @join__field(graph: RESULTS)
+  exerciseIndex: Int! @join__field(graph: RESULTS)
+  msTestResultTimeStamp: String! @join__field(graph: RESULTS)
+  msTimeStamp: String! @join__field(graph: RESULTS)
+  problem: Problem! @join__field(graph: PROBLEMS)
+  problemId: ID! @join__field(graph: RESULTS)
+  userId: ID! @join__field(graph: RESULTS)
 }
 
 type Profile
-  @join__owner(graph: PROFILE)
-  @join__type(graph: PROFILE, key: "appointmentId")
+  @join__owner(graph: PROFILES)
+  @join__type(graph: PROFILES, key: "appointmentId")
   @join__type(graph: APPOINTMENT, key: "appointmentId")
 {
+  access: Access @join__field(graph: PROFILES)
   appointment: Appointment @join__field(graph: APPOINTMENT)
-  appointmentId: ID @join__field(graph: PROFILE)
-  email: String! @join__field(graph: PROFILE)
-  emailConfirmed: Boolean @join__field(graph: PROFILE)
-  id: ID! @join__field(graph: PROFILE)
-  name: String! @join__field(graph: PROFILE)
+  appointmentId: ID @join__field(graph: PROFILES)
+  email: String! @join__field(graph: PROFILES)
+  emailConfirmed: Boolean @join__field(graph: PROFILES)
+  id: ID! @join__field(graph: PROFILES)
+  name: String! @join__field(graph: PROFILES)
 }
 
 enum ProfileError {
@@ -126,37 +145,57 @@ type ProfileResult {
 }
 
 type Query {
-  lesson(id: ID!): Lesson @join__field(graph: LESSON)
-  problemResults(msTestResultTimeStamp: String!, studentId: ID!): [ProblemResult!]! @join__field(graph: TESTRESULT)
-  profile(id: ID): Profile @join__field(graph: PROFILE)
-  students: [Profile!]! @join__field(graph: PROFILE)
-  test(id: ID!): Test @join__field(graph: TEST)
-  testResult(msTestResultTimeStamp: String!, studentId: ID!): TestResult! @join__field(graph: TESTRESULT)
-  testResults(studentId: ID!): [TestResult!]! @join__field(graph: TESTRESULT)
+  lesson(id: ID!): Lesson @join__field(graph: LESSONS)
+  problemResults(msTestResultTimeStamp: String!, studentId: ID): [ProblemResult!]! @join__field(graph: RESULTS)
+  profile: Profile @join__field(graph: PROFILES)
+  student(id: ID): Profile! @join__field(graph: PROFILES)
+  students: [Profile!]! @join__field(graph: PROFILES)
+  test(id: ID!): Test @join__field(graph: TESTS)
+  testResult(msTimeStamp: String!, studentId: ID): TestResult! @join__field(graph: RESULTS)
+  testResults(studentId: ID!): [TestResult!]! @join__field(graph: RESULTS)
+}
+
+type Solution {
+  desc: String!
+  illus: Illus
 }
 
 type Test
-  @join__owner(graph: TEST)
-  @join__type(graph: TEST, key: "id")
-  @join__type(graph: TESTRESULT, key: "id")
+  @join__owner(graph: TESTS)
+  @join__type(graph: TESTS, key: "id")
+  @join__type(graph: RESULTS, key: "id")
 {
-  exercises: [Exercise!]! @join__field(graph: TEST)
-  id: ID! @join__field(graph: TEST)
-  results: [TestResult!]! @join__field(graph: TESTRESULT)
-  title: String! @join__field(graph: TEST)
+  completedLength: Int! @join__field(graph: TESTS)
+  exercises: [Exercise!]! @join__field(graph: TESTS)
+  id: ID! @join__field(graph: TESTS)
+  msNotFinishedResultTimeStamp: String @join__field(graph: TESTS)
+  results(studentId: ID): [TestResult!] @join__field(graph: RESULTS)
+  state: TestState! @join__field(graph: TESTS)
+  title: String! @join__field(graph: TESTS)
 }
 
 type TestResult
-  @join__owner(graph: TESTRESULT)
-  @join__type(graph: TESTRESULT, key: "testId")
-  @join__type(graph: TEST, key: "testId")
+  @join__owner(graph: RESULTS)
+  @join__type(graph: RESULTS, key: "testId msTimeStamp userId")
+  @join__type(graph: TESTS, key: "testId msTimeStamp userId")
 {
-  finishedTimeStamp: Int @join__field(graph: TESTRESULT)
-  msTimeStamp: String! @join__field(graph: TESTRESULT)
-  percentage: Int! @join__field(graph: TESTRESULT)
-  test: Test @join__field(graph: TEST)
-  testId: ID! @join__field(graph: TESTRESULT)
-  userId: String! @join__field(graph: TESTRESULT)
+  finishedTimeStamp: Int @join__field(graph: RESULTS)
+  msTimeStamp: String! @join__field(graph: RESULTS)
+  percentage: Int! @join__field(graph: RESULTS)
+  problemResults: [ProblemResult!]! @join__field(graph: RESULTS)
+  test: Test @join__field(graph: TESTS)
+  testId: ID! @join__field(graph: RESULTS)
+  userId: ID! @join__field(graph: RESULTS)
+}
+
+enum TestState {
+  NEW
+  NOT_CHECKED
+  NOT_FINISHED
+}
+
+type UpdateResponse {
+  success: Boolean!
 }
 
 type Vacations {
@@ -171,7 +210,7 @@ type WeekDay {
   number: Int!
 }
 
-type WriteResultResponse {
+type WriteResponse {
   problemResult: ProblemResult
   testResult: TestResult
 }

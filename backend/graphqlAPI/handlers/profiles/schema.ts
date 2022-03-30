@@ -2,7 +2,8 @@ import {gql} from "apollo-server-lambda";
 
 export const typeDefs = gql`
     type Query {
-        profile(id: ID): Profile
+        student(id: ID): Profile!
+        profile: Profile
         students: [Profile!]!
     }
     type Profile @key(fields: "appointmentId") {
@@ -11,6 +12,11 @@ export const typeDefs = gql`
         name: String!
         email: String!
         emailConfirmed: Boolean
+        access: Access
+    }
+    enum Access {
+        student
+        tutor
     }
     type Mutation {
         updateProfile(name: String!): ProfileResult!

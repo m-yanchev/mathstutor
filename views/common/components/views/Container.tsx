@@ -6,14 +6,14 @@ type Props = {
     children: any,
     maxWidth?: MaxWidth
 }
-export type MaxWidth = "sm"
+export type MaxWidth = "sm" | "md"
 
-export default function Container(props: Props) {
+export default function (props: Props) {
 
     const {children, height, maxWidth} = props
 
     return (
-        <Grid sx={{position: "absolute", height: "100%", width: "100%"}} container
+        <Grid sx={{position: "absolute", width: "100%"}} container
               alignItems={"center"} justifyContent={"center"}>
             <MaterialContainer sx={{marginTop: "64px"}} fixed maxWidth={maxWidth || "xs"} disableGutters>
                 <Paper elevation={3}>

@@ -1,54 +1,30 @@
-export type ProblemData = {
-    id: number,
-    commonDesc: string | null,
-    desc: string,
-    imageAlt: string | null,
+import {Illus, IllusData} from "./Illus";
+import {Solution, SolutionData} from "./Solution";
+
+export interface ProblemData {
+    id: number
+    commonDesc: string | null
+    desc: string
+    illus: IllusData | null
+    solution: SolutionData | null
     answer: string | null
 }
 
-export type Image = {
-    src: string,
-    alt: string
-}
+export class Problem {
 
-export default class Problem {
-
-    _id: number
-    _commonDesc: string | null
-    _desc: string
-    _imageAlt: string | null
-    _answer: string | null
+    id: number
+    commonDesc: string | null
+    desc: string
+    illus: Illus | null
+    solution: Solution | null
+    answer: string | null
 
     constructor(data: ProblemData) {
-        const {id, commonDesc, desc, imageAlt, answer} = data
-        this._id = id
-        this._commonDesc = commonDesc || null
-        this._desc = desc
-        this._imageAlt = imageAlt || null
-        this._answer = answer || null
-    }
-
-    static create(data: ProblemData) {
-        return new Problem(data)
-    }
-
-    get id(): number {
-        return this._id
-    }
-
-    get commonDesc(): string | null {
-        return this._commonDesc
-    }
-
-    get desc(): string {
-        return this._desc
-    }
-
-    get image(): Image | null {
-        return this._imageAlt ? {src: `/images/problems/${this._id}`, alt: this._imageAlt} : null
-    }
-
-    get answer(): string | null {
-        return this._answer
+        this.id = data.id
+        this.commonDesc = data.commonDesc
+        this.desc = data.desc
+        this.answer = data.answer || null
+        this.illus = Illus.create(data.illus, {problemId: data.id, useCase: "problem"})
+        this.solution = Solution.create(data.solution, {problemId: data.id})
     }
 }

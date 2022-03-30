@@ -1,154 +1,147 @@
-export type ProblemResultData = {
-    problem: ProblemData
-    answer: string
+import {Problem as BaseProblem, ProblemData} from "../../common/rules/Problem";
+
+interface UserData {
+    access: Role | null
 }
 
-export type ProblemData = {
-    id: number
-    commonDesc: string | null
-    desc: string
-    image: Image | null
-    answer: string
-}
-
-type Image = {
-    src: string
-    alt: string
-}
+export type Role = "tutor" | "student"
 
 type TestResultData = {
+    msTimeStamp: string
     test: TestData
+    problemResults: ProblemResultData[]
+}
+
+type ProblemResultData = {
+    msTimeStamp: string
+    estimate: number | null
+    answer: string | null
 }
 
 type TestData = {
     title: string
+    exercises: ExerciseData[]
 }
 
-export class ProblemResults {
-
-    _problems: Problem[]
-    _results: Result[]
-
-    constructor(data: ProblemResultData[]) {
-        this._problems = data.map(item => Problem.create(item.problem))
-        this._results = data.map(item => Result.create(item))
-    }
-
-    static create(data: ProblemResultData[] | void): ProblemResults | null {
-        return data ? new ProblemResults(data) : null
-    }
-
-    get problems(): Problem[] {
-        return this._problems
-    }
-
-    get results(): Result[] {
-        return this._results
-    }
-
-    get length(): number {
-        return this._problems.length
-    }
+type ExerciseData = {
+    maxEstimate: number
+    withDetailedAnswer: boolean
+    problem: ProblemData
 }
 
-class Problem {
+export class User {
 
-    _id: number
-    _commonDesc: string | null
-    _desc: string
-    _image: Image | null
-    _answer: string
+    role: Role
 
-    constructor(data: ProblemData) {
-        const {id, commonDesc, desc, image, answer} = data
-        this._id = id
-        this._commonDesc = commonDesc || null
-        this._desc = desc
-        this._image = image || null
-        this._answer = answer
+    constructor(data: UserData) {
+        this.role = data.access || "student"
     }
 
-    static create(data: ProblemData): Problem {
-        return new Problem(data)
-    }
-
-    get id(): number {
-        return this._id
-    }
-
-    get commonDesc(): string | null {
-        return this._commonDesc
-    }
-
-    get desc(): string {
-        return this._desc
-    }
-
-    get image(): Image | null {
-        return this._image
-    }
-
-    get answer(): string {
-        return this._answer
-    }
-}
-
-class Result {
-
-    _success: boolean
-    _answer: string
-
-    constructor(data: ProblemResultData) {
-        const {problem, answer} = data
-        this._answer = answer
-        this._success = answer === problem.answer
-    }
-
-    static create(data: ProblemResultData): Result {
-        return new Result(data)
-    }
-
-    get success(): boolean {
-        return this._success
-    }
-
-    get answer(): string {
-        return this._answer
+    static create(data: UserData | null): User | null {
+        return data ? new User(data) : null
     }
 }
 
 export class TestResult {
 
-    _test: Test
+    msTimeStamp: string
+    test: Test
+    problemResults: ProblemResult[]
 
     constructor(data: TestResultData) {
-        const {test} = data
-        this._test = Test.create(test)
+        const {test, problemResults, msTimeStamp} = data
+        this.msTimeStamp = msTimeStamp
+        this.test = Test.create(test)
+        this.problemResults = problemResults.map(item => ProblemResult.create(item))
     }
 
     static create(data: TestResultData | null): TestResult | null {
         return data ? new TestResult(data) : null
     }
 
-    get test(): Test {
-        return this._test
+    get exercises(): Exercise[] {
+        return this.test.exercises
+    }
+
+    get problems(): Problem[] {
+        return this.test.exercises.map(item => item.problem)
+    }
+
+    isLastResult(index: number): boolean {
+        return this.problemResults.length - 1 === index
+    }
+
+    getSuccess(index: number): boolean {
+        return !this.test.exercises[index].withDetailedAnswer &&
+            this.test.exercises[index].problem.answer === this.problemResults[index].answer
     }
 }
 
 class Test {
 
-    _title: string
+    title: string
+    exercises: Exercise[]
 
     constructor(data: TestData) {
-        const {title} = data
-        this._title = title
+        const {title, exercises} = data
+        this.title = title
+        this.exercises = exercises.map(item => Exercise.create(item))
     }
 
     static create(data: TestData): Test {
         return new Test(data)
     }
+}
 
-    get title(): string {
-        return this._title
+class Exercise {
+
+    maxEstimate: number
+    withDetailedAnswer: boolean
+    problem: Problem
+
+    constructor(data: ExerciseData) {
+        this.maxEstimate = data.maxEstimate
+        this.withDetailedAnswer = data.withDetailedAnswer
+        this.problem = Problem.create(data.problem)
+    }
+
+    static create(data: ExerciseData): Exercise {
+        return new Exercise(data)
+    }
+
+    validate(estimate: number | null): boolean {
+        return estimate !== null && estimate >=0 && estimate <= this.maxEstimate
+    }
+}
+
+class Problem extends BaseProblem {
+
+    constructor(data: ProblemData) {
+        super(data);
+    }
+
+    static create(data: ProblemData): Problem {
+        return new Problem(data)
+    }
+}
+
+class ProblemResult {
+
+    msTimeStamp: string
+    estimate: number | null
+    answer: string | null
+
+    constructor(data: ProblemResultData) {
+        this.msTimeStamp = data.msTimeStamp
+        this.estimate = data.estimate
+        this.answer = data.answer
+    }
+
+    static create(data: ProblemResultData): ProblemResult {
+        return new ProblemResult(data)
+    }
+
+    get received(): boolean {
+        return this.estimate !== null
     }
 }

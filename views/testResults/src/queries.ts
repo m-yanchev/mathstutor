@@ -6,10 +6,11 @@ export const query = gql`
             test {
                 title
             }
+            finishedTimeStamp
             msTimeStamp
             percentage
         }
-        profile(id: $studentId) {
+        student(id: $studentId) {
             name
             email
         }

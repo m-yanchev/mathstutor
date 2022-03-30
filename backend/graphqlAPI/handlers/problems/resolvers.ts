@@ -1,25 +1,19 @@
-type ExerciseParent = {
-    problemId: number
-}
-type Context = {
-    dataSource: DataSource
-}
-export type DataSource = {
-    get: (id: number) => Promise<Problem>
-}
-export type Problem = {
-    id: number,
-    commonDesc: string | null,
-    desc: string,
-    imageAlt: string | null,
-    answer: string | null
-}
+import {Context, Problem, ProblemParent, ProblemsParent} from "./problems";
 
-const problem = (parent: ExerciseParent, _, context: Context): Promise<Problem> => {
+const problem = (parent: ProblemParent, _, context: Context): Promise<Problem> => {
     const {dataSource} = context
     const {problemId} = parent
-    const {get} = dataSource
-    return get(problemId)
+    const {problems} = dataSource
+    const {get} = problems
+    return get({id: problemId})
+}
+
+const problems = (parent: ProblemsParent, _, context: Context): Promise<Problem[]> => {
+    const {dataSource} = context
+    const {exampleIdList} = parent
+    const {problems} = dataSource
+    const {get} = problems
+    return Promise.all(exampleIdList.map(id => get({id})))
 }
 
 export const resolvers = {
@@ -28,5 +22,8 @@ export const resolvers = {
     },
     ProblemResult: {
         problem
+    },
+    Lesson: {
+        examples: problems
     }
 }

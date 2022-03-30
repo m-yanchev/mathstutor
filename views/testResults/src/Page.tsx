@@ -4,7 +4,7 @@ import AppPage from "../../common/components/views/AppPage";
 import Progress from "../../common/components/views/Progress";
 import RootDesc from "../../common/components/views/RootDesc";
 import {query} from "./queries";
-import {TestResult, Profile} from "./model";
+import {TestResult, Student} from "./model";
 import View from "./View";
 
 const DATA_RETRIEVAL_ERROR_MESSAGE = 'Не получилось загрузить результаты. Попробуйте повторить позже.'
@@ -19,7 +19,7 @@ export default function (props: Props) {
 
     const dataState = useQuery(query, {variables: {studentId}})
     const testResults = TestResult.createList(dataState.data?.testResults)
-    const profile = Profile.create(dataState.data?.profile)
+    const profile = Student.create(dataState.data?.student)
     if (dataState.error) console.error(dataState.error)
 
     return (

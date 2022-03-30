@@ -11,7 +11,7 @@ provider:
   region: eu-central-1
   stage: prod
   runtime: nodejs14.x
-  timeout: 15
+  timeout: 30
   lambdaHashingVersion: 20201221
   layers:
     - arn:aws:lambda:eu-central-1:477719599351:layer:libs:54
@@ -36,7 +36,7 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: true
-  profile:
+  profiles:
     handler: handlers/profiles/index.handler
     package:
       patterns:
@@ -66,17 +66,17 @@ functions:
           path: /course
           method: post
           cors: true
-  lesson:
-    handler: handlers/lesson/index.handler
+  lessons:
+    handler: handlers/lessons/index.handler
     package:
       patterns:
-        - handlers/lesson/*
+        - handlers/lessons/*
     events:
       - http:
-          path: /lesson
+          path: /lessons
           method: post
           cors: true
-  test:
+  tests:
     handler: handlers/tests/index.handler
     package:
       patterns:
@@ -86,7 +86,7 @@ functions:
           path: /tests
           method: post
           cors: true
-  testResult:
+  results:
     handler: handlers/results/index.handler
     package:
       patterns:
@@ -96,7 +96,7 @@ functions:
           path: /results
           method: post
           cors: true
-  problem:
+  problems:
     handler: handlers/problems/index.handler
     package:
       patterns:

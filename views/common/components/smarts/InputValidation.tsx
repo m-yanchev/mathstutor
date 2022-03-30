@@ -16,6 +16,7 @@ type InputValidationProps = {
     autoFocus?: boolean,
     label: Label,
     min?: number
+    max?: number
 }
 
 function InputValidation(props: InputValidationProps) {

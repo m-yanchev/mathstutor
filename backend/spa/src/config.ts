@@ -33,34 +33,34 @@ export const templateData = {
         path: "/form/lesson/",
         title: "Урок",
         description: "Урок",
-        ver: 4
+        ver: "7.1"
     },
     test: {
         path: "/form/test/",
         title: "Контрольная работа",
         description: "Контрольная работа",
         stylesVer: 1,
-        ver: 2,
+        ver: "7.1",
         mathJaxServiceOn: true
     },
     students: {
         path: "/form/students/",
         title: "Ученики",
         description: "Ученики",
-        ver: 1
+        ver: 7
     },
     "test-results": {
         path: "/form/test-results/",
         title: "Результаты выполнения контрольных работ",
         description: "Результаты выполнения контрольных работ",
-        ver: 1
+        ver: 7
     },
     "problem-results": {
         path: "/form/problem-results/",
         title: "Результаты выполнения контрольной работы",
         description: "Результаты выполнения контрольной работы",
         stylesVer: 1,
-        ver: 1,
+        ver: 7,
         mathJaxServiceOn: true
     },
     "update-password": {
@@ -69,4 +69,18 @@ export const templateData = {
         description: "Обновление пароля",
         ver: 1
     },
+    examples: {
+        path: "/form/examples/",
+        title: "Примеры решений заданий",
+        description: "Примеры решений заданий",
+        ver: 7,
+        stylesVer: 7,
+        mathJaxServiceOn: true
+    },
+    student: {
+        path: "/form/student/",
+        title: "Уроки ученика",
+        description: "Уроки ученика",
+        ver: 7
+    }
 }

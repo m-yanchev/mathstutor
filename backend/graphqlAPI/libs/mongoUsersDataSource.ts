@@ -12,10 +12,6 @@ const getStudents = async () => {
     return await find("users", {access: "student", appointmentId: {$exists: true}})
 }
 
-const getUser = filter => {
-    return findOne("users", filter)
-}
-
 const getProfile = async user => {
     const {id, token} = user
     const filter = token ? {id, token} : {id}
@@ -46,5 +42,5 @@ const updatePassword = async (user, password) => {
 }
 
 export const usersDataSource: UsersDataSource = {
-    getAccess, getStudents, getUser, getProfile, put, remove, update, updatePassword
+    getAccess, getStudents, getProfile, put, remove, update, updatePassword
 }

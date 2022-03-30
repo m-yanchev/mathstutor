@@ -1,33 +1,21 @@
-import {DataSource, Problem} from "./resolvers";
-import type {DynamoNumber, DynamoString} from "dynamoDBAPI";
-
-type GetDataSource = (dbAPI: DbAPI) => DataSource
-type DbAPI = {
-    getItem: (tableName: string, key: Key) => Promise<Item>
-}
-type Key = {
-    id: DynamoNumber
-}
-export type Item = {
-    id: DynamoNumber,
-    commonDesc?: DynamoString,
-    desc: DynamoString,
-    imageAlt?: DynamoString,
-    answer?: DynamoString
-}
+import {GetDataSource, GetFilter, Illus, IllusItem, Item, Problem} from "./problems";
 
 export const getDataSource: GetDataSource = (dbAPI) => {
 
     const {getItem} = dbAPI
 
-    const get = async (id: number) : Promise<Problem> => {
-        const {commonDesc, desc, imageAlt, answer} = await getItem("problems", {id: {N: String(id)}})
+    const get = async (filter: GetFilter) : Promise<Problem> => {
+        const {id} = filter
+        const item: Item = await getItem("problems", {id: {N: String(id)}})
+        const getIllus = (item: IllusItem | void): Illus | null =>
+            item ? {name: item.M.name ? item.M.name.S : null} : null
         return {
             id,
-            commonDesc: commonDesc ? commonDesc.S : null,
-            desc: desc.S,
-            imageAlt: imageAlt ? imageAlt.S : null,
-            answer: answer ? answer.S : null
+            commonDesc: item.commonDesc ? item.commonDesc.S : null,
+            desc: item.desc.S,
+            illus: getIllus(item.illus),
+            solution: item.solution ? {desc: item.solution.M.desc.S, illus: getIllus(item.solution.M.illus)} : null,
+            answer: item.answer ? item.answer.S : null
         }
     }
 

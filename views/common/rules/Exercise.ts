@@ -1,4 +1,4 @@
-import Problem, {ProblemData} from "./Problem";
+import {Problem, ProblemData} from "./Problem";
 
 export type ExerciseData = {
     problem: ProblemData
@@ -10,7 +10,7 @@ export default class Exercise {
 
     constructor(data: ExerciseData) {
         const {problem} = data
-        this._problem = Problem.create(problem)
+        this._problem = new Problem(problem)
     }
 
     static create(data: ExerciseData) {

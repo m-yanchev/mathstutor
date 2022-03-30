@@ -1,172 +1,133 @@
-import type {UserAPI} from "apolloSubgraphHandler";
-import {UsersDataSource} from "User";
+import type {
+    Context,
+    GetTestResultArgs,
+    GetTestResultsArgs,
+    TestParent,
+    GetProblemResultsParent,
+    TestResult,
+    GetProblemResultsArgs,
+    ProblemResult,
+    Exercise,
+    WriteArgs,
+    UpdateArgs,
+    UpdateResponse,
+    WriteResponse
+} from "./results";
 
-export type Context = {
-    dataSource: DataSource,
-    userAPI: UserAPI
-}
-type DataSource = {
-    results: TestResultsDataSource,
-    users: UsersDataSource
-}
-export type TestResultsDataSource = {
-    getTestResult: GetTestResult,
-    getTestResults: GetTestResults,
-    addProblemResult: AddProblemResult,
-    addTestResult: AddTestResult,
-    updateTestResult: UpdateTestResult,
-    getTest: GetTest,
-    getProblem: GetProblem,
-    getProblemResults: GetProblemResults
-}
-export type GetTestResults = (filter: TestResultsFilter) => Promise<TestResult[]>
-export type AddProblemResult = (data: ProblemResult) => Promise<void>
-export type AddTestResult = (data: TestResult) => Promise<void>
-export type UpdateTestResult = (filter: TestResultKey, data: UpdateTestResultData) => Promise<void>
-export type GetTest = (id: number) => Promise<TestData>
-export type GetProblem = (id: number) => Promise<Problem>
-export type GetProblemResults = (filter: GetProblemResultsFilter) => Promise<ProblemResult[]>
-export type GetTestResult = (key: TestResultKey) => Promise<TestResult>
-export type GetProblemResult = (key: ProblemResultKey) => Promise<ProblemResult>
-export type TestResult = {
-    msTimeStamp: string,
-    userId: string,
-    testId: number,
-    finishedTimeStamp: number | null
-    percentage: number
-}
-export type ProblemResult = {
-    percentage: number,
-    msTimeStamp: string,
-    msTestResultTimeStamp: string,
-    problemId: number,
-    userId: string,
-    answer: string
-}
-export type TestResultKey = {
-    msTimeStamp: string,
-    userId: string
-}
-export type ProblemResultKey = {
-    msTimeStamp: string,
-    userId: string
-}
-type TestResultsFilter = {
-    userId: string,
-    testId?: number
-}
-type GetProblemResultsFilter = {
-    msTestResultTimeStamp: string,
-    userId: string
-}
-type TestData = {
-    exercisesLength: number
-}
-type UpdateTestResultData = {
-    finishedTimeStamp: number | null,
-    percentage: number
-}
-export type WriteResultResponse = {
-    testResult: TestResult,
-    problemResult: ProblemResult
-}
-export type WriteResultArgs = {
-    answer: string,
-    testId: number,
-    msTestResultTimeStamp: string | null,
-    problemId: number
-}
-export type Parent = {
-    id?: number
-}
-type Problem = {
-    answer: string
-}
-export type TestResultArgs = {
-    studentId: string,
-    msTestResultTimeStamp: string
-}
-export type ResultsArgs = {
-    studentId?: string
-}
-type ProblemResultsArgs = {
-    studentId: string,
-    msTestResultTimeStamp: string
+type GetNewTestPercentageArgs = {
+    problemResults: ProblemResult[],
+    exercises: Exercise[],
+    index: number,
+    estimate: number
 }
 
-const testResult = async (_, args: TestResultArgs, context: Context): Promise<TestResult | null> => {
-    const {studentId, msTestResultTimeStamp} = args
+const getTestResult = async (
+    parent: TestParent, args: GetTestResultArgs, context: Context
+): Promise<TestResult | null> => {
+    const {studentId, msTimeStamp} = args
     const {dataSource, userAPI} = context
     const {user} = userAPI
     const {results, users} = dataSource
-    const {getTestResult} = results
     const {getAccess} = users
     const access = await getAccess(user)
-    if (access !== "tutor") return null
-    return getTestResult({userId: studentId, msTimeStamp: msTestResultTimeStamp})
-}
-
-const testResults = async (parent: Parent, args: ResultsArgs | void, context: Context): Promise<TestResult[]> => {
-    const {studentId} = args || {}
-    const {dataSource, userAPI} = context
-    const {user} = userAPI
-    const {getTestResults} = dataSource.results
-    const {getAccess} = dataSource.users
-    const access = await getAccess(user)
     if (studentId) {
-        if (access !== "tutor") return []
-        return getTestResults({userId: studentId})
+        if (access !== "tutor") return null
+        return results.getTestResult({userId: studentId, msTimeStamp})
     } else {
-        if (!access) return []
-        return user ? getTestResults({userId: user.id, testId: parent.id}) : []
+        if (!user) return null
+        return results.getTestResult({userId: user.id, msTimeStamp})
     }
-
 }
 
-const problemResults = async (_, args: ProblemResultsArgs, context: Context): Promise<ProblemResult[]> => {
+const getTestResults = async (
+    parent: TestParent, args: GetTestResultsArgs, context: Context
+): Promise<TestResult[]> => {
+    const {studentId} = args
     const {dataSource, userAPI} = context
     const {user} = userAPI
-    const {studentId, msTestResultTimeStamp} = args
-    const {getProblemResults} = dataSource.results
+    const {results, users} = dataSource
+    if (studentId) {
+        const {getAccess} = users
+        const access = await getAccess(user)
+        if (access !== "tutor") return []
+        return results.getTestResults({userId: studentId})
+    } else {
+        return user ? results.getTestResults({userId: user.id, testId: parent.id}) : []
+    }
+}
+
+const getProblemResults = async (
+    parent: GetProblemResultsParent | void, args: GetProblemResultsArgs, context: Context
+): Promise<ProblemResult[]> => {
+    const {dataSource, userAPI} = context
+    const {user} = userAPI
+    const {results} = dataSource
     const {getAccess} = dataSource.users
     const access = await getAccess(user)
-    if (access !== "tutor") return []
-    return getProblemResults({userId: studentId, msTestResultTimeStamp})
+    if (parent?.userId && parent.msTimeStamp) {
+        return results.getProblemResults({userId: parent.userId, msTestResultTimeStamp: parent.msTimeStamp})
+    } else if (args.msTestResultTimeStamp) {
+        if (args.studentId) {
+            if (access !== "tutor") return []
+            return results.getProblemResults({
+                userId: args.studentId, msTestResultTimeStamp: args.msTestResultTimeStamp
+            })
+        } else {
+            if (!access) return []
+            return user ?
+                results.getProblemResults({userId: user.id, msTestResultTimeStamp: args.msTestResultTimeStamp}) :
+                []
+        }
+    } else {
+        return []
+    }
 }
 
-const writeResult = async (_, args: WriteResultArgs, context: Context): Promise<WriteResultResponse> => {
+const getNewTestPercentage = (args: GetNewTestPercentageArgs): number => {
+    const {problemResults, exercises, index, estimate} = args
+    const sum = problemResults.reduce((sum, result, i) =>
+        sum + (i === index ? 0: (result.estimate || 0)),
+        estimate
+    )
+    const maxSum = exercises.reduce((sum, exercise) => sum + exercise.maxEstimate, 0)
+    return Math.round(sum / maxSum * 100)
+}
+
+const write = async (_, args: WriteArgs, context: Context): Promise<WriteResponse> => {
     const {dataSource, userAPI} = context
     const {user} = userAPI
-    const {answer, msTestResultTimeStamp, testId, problemId} = args
+    const {answer, msTestResultTimeStamp, testId, problemId, exerciseIndex} = args
     const {
         addProblemResult, addTestResult, updateTestResult, getTest, getProblem, getProblemResults
     } = dataSource.results
     if (!user) throw new Error("Доступ запрещён!")
     const problemResults = msTestResultTimeStamp ?
         await getProblemResults({msTestResultTimeStamp, userId: user.id}) : []
-    const prevProblemPercentSum = problemResults.reduce((sum, result) =>
-        result.percentage + sum,
-        0
-    )
     const [test, problem] = await Promise.all([getTest(testId), getProblem(problemId)])
     const msCurTimeStamp = Date.now()
-    const percentage = answer === problem.answer ? 100 : 0
+    const estimate = answer === problem.answer ? test.exercises[exerciseIndex].maxEstimate : 0
     const msTimeStamp = msTestResultTimeStamp || String(msCurTimeStamp)
     const problemResult: ProblemResult = {
         msTimeStamp: String(msCurTimeStamp),
-        percentage,
+        estimate: answer !== null ? estimate : null,
         userId: user.id,
-        problemId,
+        problemId: String(problemId),
         msTestResultTimeStamp: msTimeStamp,
-        answer
+        answer,
+        exerciseIndex
     }
     await addProblemResult(problemResult)
     const testResult: TestResult = {
         msTimeStamp,
         userId: user.id,
-        testId,
-        finishedTimeStamp: test.exercisesLength === problemResults.length + 1 ? Math.floor(msCurTimeStamp/1000) : null,
-        percentage: Math.round((prevProblemPercentSum + percentage) / test.exercisesLength)
+        testId: String(testId),
+        finishedTimeStamp: test.exercises.length === problemResults.length + 1 ? Math.floor(msCurTimeStamp/1000) : null,
+        percentage: getNewTestPercentage({
+            problemResults,
+            exercises: test.exercises,
+            index: exerciseIndex,
+            estimate
+        })
     }
     if (msTestResultTimeStamp) {
         await updateTestResult(
@@ -181,16 +142,52 @@ const writeResult = async (_, args: WriteResultArgs, context: Context): Promise<
     }
 }
 
+const update = async (_, args: UpdateArgs, context: Context): Promise<UpdateResponse> => {
+    const {dataSource, userAPI} = context
+    const {results, users} = dataSource
+    const {user} = userAPI
+    const {getAccess} = users
+    if (await getAccess(user) !== "tutor") return {success: false}
+    const {studentId, msProblemResultTimeStamp, estimate} = args
+    const {
+        getTest, updateProblemResult, updateTestResult, getProblemResults, getProblemResult, getTestResult
+    } = results
+    const problemResult = await getProblemResult({userId: studentId, msTimeStamp: msProblemResultTimeStamp})
+    const problemResults = await getProblemResults({
+        userId: studentId, msTestResultTimeStamp: problemResult.msTestResultTimeStamp
+    })
+    const testResult = await getTestResult({
+        userId: studentId, msTimeStamp: problemResult.msTestResultTimeStamp
+    })
+    const test = await getTest(Number(testResult.testId))
+    await updateProblemResult(
+        {userId: studentId, msTimeStamp: msProblemResultTimeStamp},
+        {estimate}
+    )
+    await updateTestResult(
+        {userId: studentId, msTimeStamp: testResult.msTimeStamp},
+        {percentage: getNewTestPercentage({
+                problemResults, exercises: test.exercises, index: problemResult.exerciseIndex, estimate
+        })}
+    )
+    return {success: true}
+}
+
 export const resolvers = {
-    Test: {
-        results: testResults
+    TestResult: {
+        problemResults: getProblemResults
     },
-    Mutation: {
-        writeResult
+    Test: {
+        result: getTestResult,
+        results: getTestResults
     },
     Query: {
-        testResults,
-        problemResults,
-        testResult
+        testResults: getTestResults,
+        problemResults: getProblemResults,
+        testResult: getTestResult
+    },
+    Mutation: {
+        writeResult: write,
+        updateResult: update
     }
 }

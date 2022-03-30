@@ -31,7 +31,11 @@
     "start problem-results": "webpack serve --config views/problemResults/dev.webpack.config.js --open",
     "build problem-results client": "webpack --config views/problemResults/prod.webpack.config.js",
     "start update-password": "webpack serve --config views/updatePassword/dev.webpack.config.js --open",
-    "build update-password client": "webpack --config views/updatePassword/prod.webpack.config.js"
+    "build update-password client": "webpack --config views/updatePassword/prod.webpack.config.js",
+    "start student": "webpack serve --config views/student/dev.webpack.config.js --open",
+    "build student client": "webpack --config views/student/prod.webpack.config.js",
+    "start examples": "webpack serve --config views/examples/dev.webpack.config.js --open",
+    "build examples client": "webpack --config views/examples/prod.webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -83,6 +87,6 @@
     "serverless-plugin-typescript": "^1.1.9"
   },
   "jest": {
-    "testTimeout": 10000
+    "testTimeout": 30000
   }
 }

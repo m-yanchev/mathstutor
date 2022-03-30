@@ -15,7 +15,33 @@ export type UserAPI = {
     user: User | null
 }
 
+interface MakeServerProps {
+    typeDefs: DocumentNode
+    resolvers: any
+    context: any
+}
+
 const getUserFromHeader = (req): GetUserFromHeader => (name: string): string => req.headers[name]
+
+const makeServer = (props: MakeServerProps) => {
+
+    const {typeDefs, resolvers, context} = props
+
+    return new ApolloServer({schema: buildSubgraphSchema([{typeDefs, resolvers}]), context})
+}
+
+export const getTestServer = async (options: Options, user?: User) => {
+    const {typeDefs, resolvers, dataSource} = options
+    const context = () => {
+        return {
+            userAPI: {
+                user: user || null
+            },
+            dataSource: dataSource
+        }
+    }
+    return makeServer({typeDefs, resolvers, context})
+}
 
 const getServer = async (options: Options) => {
     const {typeDefs, resolvers, dataSource} = options
@@ -28,7 +54,7 @@ const getServer = async (options: Options) => {
             dataSource: dataSource
         }
     }
-    return new ApolloServer({schema: buildSubgraphSchema([{typeDefs, resolvers}]), context})
+    return makeServer({typeDefs, resolvers, context})
 }
 
 export const subgraphHandler = async (event, context, options: Options) => {

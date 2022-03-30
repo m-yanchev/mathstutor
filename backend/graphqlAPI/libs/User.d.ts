@@ -11,15 +11,13 @@ export interface UsersDataSource {
     updatePassword: UpdatePassword,
     put: Put
     remove: Remove
-    getUser: GetUser
 }
 
 type GetAccess = (user: User | null) => Promise<Access | null>
 type GetUsers = () => Promise<Profile[]>
-type GetProfile = (user: User) => Promise<Profile | null>
+type GetProfile = (filter: GetProfileFilter) => Promise<Profile | null>
 type Update = (user: User, data: UpdateData) => Promise<void>
 type UpdatePassword = (user: User, password: string) => Promise<void>
-type GetUser = (filter: GetUserFilter) => Promise<User>
 type Put = (data: PutData) => Promise<PutResult>
 type Remove = (filter: RemoveFilter) => Promise<void>
 type Profile = {
@@ -35,7 +33,7 @@ type Profile = {
 type UpdateData = {
     name: string
 }
-type GetUserFilter = {
+type GetProfileFilter = {
     id?: string
     email?: string
 }

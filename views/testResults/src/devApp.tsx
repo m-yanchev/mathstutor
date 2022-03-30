@@ -3,6 +3,8 @@ import {render} from "../../common/appRender";
 import AppDevProvider from "../../common/components/smarts/AppDevProvider";
 import {query} from "./queries";
 import Page from "./Page";
+import {GraphQLError} from "graphql";
+import {getParam} from "../../common/paramsGetter";
 
 const mocks = [{
     request: {
@@ -84,12 +86,26 @@ const mocks = [{
                     title: "Решение квадратных уравнений."
                 }
             }],
-            profile: {
+            student: {
                 email: "ivanov@yandex.ru",
                 name: "Иван"
             }
         }
     }
+}, {
+    request: {
+        query: query,
+        variables: {studentId: "2"}
+    },
+    result: {
+        errors: [new GraphQLError("Ошибка")]
+    }
+}, {
+    request: {
+        query: query,
+        variables: {studentId: "3"}
+    },
+    error: new Error("Ошибка")
 }]
 
 const app = <App/>
@@ -98,7 +114,7 @@ render(app)
 function App() {
     return (
         <AppDevProvider mocks={mocks}>
-            <Page studentId={"1"}/>
+            <Page studentId={getParam("studentId")}/>
         </AppDevProvider>
     )
 }

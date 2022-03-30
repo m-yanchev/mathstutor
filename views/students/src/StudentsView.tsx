@@ -1,6 +1,7 @@
 import React from 'react';
 import Profile from "../../common/rules/Profile";
 import {List, ListItem, ListItemText} from "@mui/material";
+import {spaPageFolder} from "../../common/constants";
 
 type Props = {
     profiles: Profile[]
@@ -14,7 +15,7 @@ export default function StudentsView(props: Props) {
         <List>
             {profiles.map(profile => (
                 <ListItem key={profile.id} component={"a"}
-                          href={`/form/test-results?studentId=${profile.id}`}>
+                          href={`/${spaPageFolder}/student?id=${profile.id}`}>
                     <ListItemText primary={profile.name} secondary={profile.email}
                                   primaryTypographyProps={{color: "primary"}}/>
                 </ListItem>

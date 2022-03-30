@@ -73,6 +73,12 @@ describe("getItems", () => {
             userId: {S: studentId},
             finishedTimeStamp: {N: "1633178240"}
         }, {
+            percentage: {N: "70"},
+            msTimeStamp: {S: "1633177000456"},
+            testId: {N: "5"},
+            userId: {S: studentId},
+            finishedTimeStamp: {N: "1633177240"}
+        }, {
             percentage: {N: "60"},
             msTimeStamp: {S: "1633262400123"},
             testId: {N: "2"},

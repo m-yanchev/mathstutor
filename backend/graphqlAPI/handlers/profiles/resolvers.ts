@@ -1,24 +1,6 @@
-import {UserAPI} from "apolloSubgraphHandler";
-import {Profile, UsersDataSource} from "User";
+import {Profile} from "User";
 import type {PostTransport} from "PostTransport";
-
-export type Context = {
-    dataSource: DataSource,
-    userAPI: UserAPI,
-}
-
-type ProfileArgs = {
-    id?: string
-}
-
-type UpdatePasswordArgs = {
-    password: string
-}
-
-type DataSource = {
-    users: UsersDataSource
-    postTransport: PostTransport
-}
+import {Context, ProfileArgs, UpdatePasswordArgs} from "./profiles";
 
 const sendLink = ({email, id, name}, postTransport: PostTransport) => {
 
@@ -35,14 +17,20 @@ const sendLink = ({email, id, name}, postTransport: PostTransport) => {
     return postTransport.sendEmail({email, html, subject})
 }
 
-const profile = async (_, args: ProfileArgs, context: Context) => {
+const profile = async (_, args: ProfileArgs, context: Context): Promise<Profile | null> => {
     const {id} = args
     const {userAPI, dataSource} = context
     const {users} = dataSource
-    const {getProfile, getUser} = users
+    const {getProfile, getAccess} = users
     const {user} = userAPI
-    if (id) return getUser({id})
-    else return user ? getProfile(user) : null
+    if (!user) return null
+    if (id) {
+        if (await getAccess(user) !== "tutor") return null
+        return getProfile({id})
+    }
+    else {
+        return getProfile(user)
+    }
 }
 
 const students = async (_, __, context: Context): Promise<Profile[] | null> => {
@@ -84,8 +72,8 @@ const signUp = async (_, args, context: Context) => {
     const {name, email, password} = args
     const {dataSource} = context
     const {users, postTransport} = dataSource
-    const {getUser, put, remove} = users
-    const user = await getUser({email})
+    const {getProfile, put, remove} = users
+    const user = await getProfile({email})
     if (user) return {ok: false, error: "email_already_exists"}
     const {id} = await put({name, email, password})
     try {
@@ -100,6 +88,7 @@ const signUp = async (_, args, context: Context) => {
 export const resolvers = {
     Query: {
         profile,
+        student: profile,
         students
     },
     Mutation: {

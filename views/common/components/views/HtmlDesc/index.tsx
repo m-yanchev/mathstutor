@@ -6,7 +6,7 @@ type Props = {
     children: string
 }
 
-export default function ProblemDesc(props: Props) {
+export default function (props: Props) {
 
     const {children} = props
 

@@ -1,8 +1,12 @@
-import {createTheme} from "@mui/material";
+import {createTheme} from "@mui/material/styles";
 
 export default function getTheme() {
 
-    const theme = createTheme()
+    const theme = createTheme({
+        typography: {
+            fontFamily: '"Montserrat",sans-serif'
+        }
+    })
 
     theme.typography.fontFamily = '"Montserrat",sans-serif'
 
@@ -20,6 +24,8 @@ export default function getTheme() {
     theme.typography.h3.fontFamily = '"Montserrat",sans-serif'
 
     theme.typography.h6.fontFamily = '"Montserrat",sans-serif'
+    theme.typography.h6.fontSize = "0.9rem"
+    theme.typography.h6.fontWeight = 500
 
     theme.typography.subtitle1.fontSize = "0.8rem"
     theme.typography.subtitle1.fontFamily = '"Montserrat",sans-serif'

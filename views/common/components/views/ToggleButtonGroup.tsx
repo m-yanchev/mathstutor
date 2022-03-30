@@ -1,11 +1,5 @@
 import React, {useState} from "react";
-import {Button, ButtonGroup, makeStyles} from "@material-ui/core";
-
-const useStyles = makeStyles({
-    root: {
-        margin: "0.5rem 0"
-    }
-})
+import {Button, ButtonGroup} from "@mui/material";
 
 type Props = {
     defaultLabelIdx: number,
@@ -17,15 +11,14 @@ export default function ToggleButtonGroup(props: Props) {
 
     const {defaultLabelIdx, labels, onClick} = props
     const [curIdx, setCurIdx] = useState<number>(defaultLabelIdx)
-    const classes = useStyles()
-    const getColor = idx => idx === curIdx ? "primary" : "default"
+    const getColor = idx => idx === curIdx ? "primary" : "inherit"
     const handleClick = idx => {
         setCurIdx(idx)
         onClick(idx)
     }
 
     return (
-        <ButtonGroup className={classes.root} variant={"text"} size={"small"}>
+        <ButtonGroup sx={{margin: "0.5rem 0"}} variant={"text"} size={"small"}>
             {labels.map((label, i) =>
                 <Button key={i} color={getColor(i)} onClick={() => handleClick(i)}>
                     {label}

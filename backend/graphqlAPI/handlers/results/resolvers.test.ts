@@ -1,17 +1,22 @@
-import {getDataSource, ProblemResultItem, TestResultItem} from "./dataSource";
+import {getDataSource} from "./dataSource";
 import {dbAPI} from "../../libs/dynamoDBAPI";
 import {
-    Context,
-    GetProblemResult,
-    GetTestResult, Parent,
+    Context, DataSource, GetProblemResultsArgs, GetProblemResultsParent,
+    GetTestResult, GetTestResultArgs,
+    GetTestResultsArgs,
     ProblemResult,
-    ProblemResultKey,
-    resolvers, ResultsArgs,
+    ProblemResultKey, TestParent,
     TestResult,
-    TestResultKey, WriteResultArgs, WriteResultResponse
-} from "./resolvers";
+    TestResultItem,
+    TestResultKey, UpdateArgs, WriteArgs,
+    WriteResponse
+} from "./results";
 import {usersDataSource} from "../../libs/mongoUsersDataSource";
 import {testUsers} from "./accessConsts";
+import {resolvers} from "./resolvers";
+import {typeDefs} from "./schema";
+import {gql} from "apollo-server";
+import {getTestServer} from "../../libs/apolloSubgraphHandler";
 
 const getTestDataSource = dbAPI => {
 
@@ -27,24 +32,8 @@ const getTestDataSource = dbAPI => {
             msTimeStamp: item.msTimeStamp.S,
             userId: item.userId.S,
             finishedTimeStamp: item.finishedTimeStamp ? Number(item.finishedTimeStamp.N) : null,
-            testId: Number(item.testId.N),
+            testId: item.testId.N,
             percentage: Number(item.percentage.N)
-        }
-    }
-
-    const getProblemResult: GetProblemResult = async key => {
-        const {msTimeStamp, userId} = key
-        const item: ProblemResultItem = await getItem("problemResults", {
-            msTimeStamp: {S: msTimeStamp},
-            userId: {S: userId}
-        })
-        return {
-            msTimeStamp: item.msTimeStamp.S,
-            userId: item.userId.S,
-            percentage: Number(item.percentage.N),
-            msTestResultTimeStamp: item.msTestResultTimeStamp.S,
-            problemId: Number(item.problemId.N),
-            answer: item.answer.S
         }
     }
 
@@ -64,129 +53,145 @@ const getTestDataSource = dbAPI => {
         })
     }
 
-    return {getTestResult, getProblemResult, deleteTestResult, deleteProblemResult}
+    return {getTestResult, deleteTestResult, deleteProblemResult}
 }
 
-const writeResultExpect = async (args, responseReference) => {
+const writeResultExpect = async (args: WriteArgs, responseReference: WriteResponse): Promise<WriteResponse> => {
 
-    const {studentForWrite} = testUsers
-    const userId = studentForWrite.id
-    const context = {
-        dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-        userAPI: {user: {id: userId, token: studentForWrite.token}}
-    }
-    const {getTestResult, getProblemResult} = getTestDataSource(dbAPI)
+    const query = gql`
+        mutation WriteResult(
+            $testId: ID!, $msTestResultTimeStamp: String, $answer: String, $problemId: ID!, $exerciseIndex: Int!
+        ) {
+            writeResult(
+                testId: $testId,
+                msTestResultTimeStamp: $msTestResultTimeStamp,
+                answer: $answer,
+                problemId: $problemId,
+                exerciseIndex: $exerciseIndex
+            ) {
+                testResult {
+                    msTimeStamp,
+                    userId,
+                    percentage
+                    testId
+                    finishedTimeStamp
+                }
+                problemResult {
+                    estimate,
+                    msTimeStamp,
+                    userId,
+                    problemId,
+                    answer,
+                    exerciseIndex,
+                    msTestResultTimeStamp
+                }
+            }
+        }
+    `
 
-    const response: WriteResultResponse = await resolvers.Mutation.writeResult({}, args, context)
-    await expect(response).toEqual(responseReference)
-    await expect(response.problemResult.msTestResultTimeStamp).toBe(response.testResult.msTimeStamp)
-    const testResult: TestResult = await getTestResult({msTimeStamp: response.testResult.msTimeStamp, userId})
+    const {studentForMutate} = testUsers
+    const userId = studentForMutate.id
+    const dataSource: DataSource = {results: getDataSource(dbAPI), users: usersDataSource}
+    const {getTestResult} = getTestDataSource(dbAPI)
+    const {getProblemResult} = getDataSource(dbAPI)
+
+    const server = await getTestServer({typeDefs, resolvers, dataSource}, studentForMutate)
+    const response = await server.executeOperation({query, variables: args})
+    if (response.errors) response.errors.forEach(error => console.error(error))
+    const writeData = response.data?.writeResult
+    await expect(writeData).toEqual(responseReference)
+    await expect(writeData.problemResult.msTestResultTimeStamp).toBe(writeData.testResult.msTimeStamp)
+    const testResult: TestResult = await getTestResult({msTimeStamp: writeData.testResult.msTimeStamp, userId})
     const problemResult: ProblemResult = await getProblemResult({
-        msTimeStamp: response.problemResult.msTimeStamp, userId
+        msTimeStamp: writeData.problemResult.msTimeStamp, userId
     })
-    await expect(testResult).toEqual(response.testResult)
-    await expect(problemResult).toEqual(response.problemResult)
+    await expect(testResult).toEqual(writeData.testResult)
+    await expect(problemResult).toEqual(writeData.problemResult)
 
-    return response
+    return writeData
 }
 
-describe("results testResult resolver", () => {
+const updateResultExpect = async (args: UpdateArgs, responseReference: WriteResponse): Promise<void> => {
+    const {tutor} = testUsers
+    const {getTestResult} = getTestDataSource(dbAPI)
+    const {getProblemResult} = getDataSource(dbAPI)
+    const query = gql`
+        mutation UpdateResult($studentId: ID!, $msProblemResultTimeStamp: String!, $estimate: Int!) {
+            updateResult(
+                estimate: $estimate, studentId: $studentId, msProblemResultTimeStamp: $msProblemResultTimeStamp
+            ) {
+                success
+            }
+        }
+    `
+    const dataSource: DataSource = {results: getDataSource(dbAPI), users: usersDataSource}
+    const server = await getTestServer({typeDefs, resolvers, dataSource}, tutor)
+    const response = await server.executeOperation({query, variables: args})
+    if (response.errors) response.errors.forEach(error => console.error(error))
+    const testResult: TestResult = await getTestResult({
+        msTimeStamp: responseReference.testResult.msTimeStamp, userId: args.studentId
+    })
+    const problemResult: ProblemResult = await getProblemResult({
+        msTimeStamp: responseReference.problemResult.msTimeStamp, userId: args.studentId
+    })
+    await expect(response.data?.updateResult.success).toBeTruthy()
+    await expect(testResult).toEqual(responseReference.testResult)
+    await expect(problemResult).toEqual(responseReference.problemResult)
+}
 
-    test("Получить результат", async () => {
-        const {tutor, student} = testUsers
-        const context: Context = {
-            dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-            userAPI: {user: tutor}
-        }
-        const args = {studentId: student.id, msTestResultTimeStamp: "1633176000456"}
-        const result: TestResult = {
-            percentage: 70,
-            msTimeStamp: "1633176000456",
-            testId: 1,
-            userId: student.id,
-            finishedTimeStamp: 1633178240
-        }
-        const response = await resolvers.Query.testResult({}, args, context)
+describe("results TestResult.problemResults resolver", () => {
+
+    const {student, tutor} = testUsers
+    const context: Context = {
+        dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
+        userAPI: {user: tutor}
+    }
+
+    test("Получить список результатов", async () => {
+
+        const parent: GetProblemResultsParent = {userId: student.id, msTimeStamp: "1633089600123"}
+        const result: ProblemResult[] = [{
+            "userId": student.id,
+            "msTimeStamp": "1633089600123",
+            "problemId": "1",
+            "estimate": 100,
+            "msTestResultTimeStamp": "1633089600123",
+            "answer": "10",
+            exerciseIndex: 0
+        }, {
+            "userId": student.id,
+            "msTimeStamp": "1633089700123",
+            "problemId": "2",
+            "estimate": null,
+            "msTestResultTimeStamp": "1633089600123",
+            "answer": "7",
+            exerciseIndex: 1
+        }]
+        const response = await resolvers.TestResult.problemResults(parent, {}, context)
         await expect(response).toEqual(result)
     })
 })
 
-describe("results testResults resolver", () => {
+describe("results Test.results resolver", () => {
 
-    test("Получить пустой список", async () => {
-        const {student} = testUsers
-        const args: ResultsArgs = {
-            studentId: student.id
-        }
-        const context: Context = {
-            dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-            userAPI: {user: null}
-        }
-        const response = await resolvers.Query.testResults({}, args, context)
-        await expect(response).toHaveLength(0)
-    })
+    const {student} = testUsers
+    const context: Context = {
+        dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
+        userAPI: {user: student}
+    }
 
-    test("Получить список результатов ученика из Query", async () => {
-        const {tutor, student} = testUsers
-        const context: Context = {
-            dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-            userAPI: {user: tutor}
-        }
-        const args: ResultsArgs = {
-            studentId: student.id
-        }
-        const results: TestResult[] = [{
-            percentage: 80,
-            msTimeStamp: "1633089600123",
-            testId: 1,
-            userId: student.id,
-            finishedTimeStamp: null
-        }, {
-            percentage: 80,
-            msTimeStamp: "1633089600124",
-            testId: 4,
-            userId: student.id,
-            finishedTimeStamp: null
-        }, {
-            percentage: 70,
-            msTimeStamp: "1633176000456",
-            testId: 1,
-            userId: student.id,
-            finishedTimeStamp: 1633178240
-        }, {
-            percentage: 70,
-            msTimeStamp: "1633176000457",
-            testId: 4,
-            userId: student.id,
-            finishedTimeStamp: 1633178240
-        }, {
-            percentage: 60,
-            msTimeStamp: "1633262400123",
-            testId: 2,
-            userId: student.id,
-            finishedTimeStamp: null
-        }]
-        const response = await resolvers.Query.testResults({}, args, context)
-        await expect(response).toEqual(results)
-    })
-
-    test("Получить список из 2-х результатов", async () => {
-        const {student} = testUsers
-        const context: Context = {
-            dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-            userAPI: {user: student}
-        }
-        const parent: Parent = {id: 1}
+    test("Получить список результатов", async () => {
+        const parent: TestParent = {id: 1}
         const result: TestResult[] = [{
             percentage: 80,
             msTimeStamp: "1633089600123",
-            testId: 1,
+            testId: "1",
             userId: student.id,
             finishedTimeStamp: null
         }, {
             percentage: 70,
             msTimeStamp: "1633176000456",
-            testId: 1,
+            testId: "1",
             userId: student.id,
             finishedTimeStamp: 1633178240
         }]
@@ -195,88 +200,238 @@ describe("results testResults resolver", () => {
     })
 })
 
-describe("results problemResults resolver", () => {
+describe("results Query.testResults resolver", () => {
 
-    test("Получить список результатов", async () => {
-        const {student, tutor} = testUsers
-        const context: Context = {
-            dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-            userAPI: {user: tutor}
+    const {tutor, student} = testUsers
+    const query = gql`
+        query TestResults($studentId: ID!) {
+            testResults(studentId: $studentId) {
+                percentage,
+                msTimeStamp,
+                testId,
+                userId,
+                finishedTimeStamp
+            }
         }
-        const args = {studentId: student.id, msTestResultTimeStamp: "1633089600123"}
-        const result: ProblemResult[] = [{
-            "userId": "6148e012088bd4488dc3d6bf",
-            "msTimeStamp": "1633089600123",
-            "problemId": 1,
-            "percentage": 100,
-            "msTestResultTimeStamp": "1633089600123",
-            "answer": "10"
+    `
+    const variables: GetTestResultsArgs = {studentId: student.id}
+    const dataSource: DataSource = {results: getDataSource(dbAPI), users: usersDataSource}
+
+    test("Получить пустой список, если пользователь не залогинен", async () => {
+        const server = await getTestServer({typeDefs, resolvers, dataSource})
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.testResults).toHaveLength(0)
+    })
+
+    test("Получить пустой список, если пользователь не авторизован как учитель", async () => {
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, student)
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.testResults).toHaveLength(0)
+    })
+
+    test("Получить список результатов ученика", async () => {
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, tutor)
+        const response = await server.executeOperation({query, variables})
+        const result: TestResult[] = [{
+            percentage: 80,
+            msTimeStamp: "1633089600123",
+            testId: "1",
+            userId: student.id,
+            finishedTimeStamp: null
         }, {
-            "userId": "6148e012088bd4488dc3d6bf",
-            "msTimeStamp": "1633089700123",
-            "problemId": 2,
-            "percentage": 0,
-            "msTestResultTimeStamp": "1633089600123",
-            "answer": "7"
+            percentage: 80,
+            msTimeStamp: "1633089600124",
+            testId: "4",
+            userId: student.id,
+            finishedTimeStamp: null
+        }, {
+            percentage: 70,
+            msTimeStamp: "1633176000456",
+            testId: "1",
+            userId: student.id,
+            finishedTimeStamp: 1633178240
+        }, {
+            percentage: 70,
+            msTimeStamp: "1633176000457",
+            testId: "4",
+            userId: student.id,
+            finishedTimeStamp: 1633178240
+        }, {
+            percentage: 70,
+            msTimeStamp: "1633177000456",
+            testId: "5",
+            userId: student.id,
+            finishedTimeStamp: 1633177240
+        }, {
+            percentage: 60,
+            msTimeStamp: "1633262400123",
+            testId: "2",
+            userId: student.id,
+            finishedTimeStamp: null
         }]
-        const response = await resolvers.Query.problemResults({}, args, context)
-        await expect(response).toEqual(result)
-    })
-
-    test("Получить пустой список. Запросил не учитель", async () => {
-        const {student} = testUsers
-        const context: Context = {
-            dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-            userAPI: {user: student}
-        }
-        const args = {studentId: student.id, msTestResultTimeStamp: "1633089600123"}
-        const response = await resolvers.Query.problemResults({}, args, context)
-        await expect(response).toHaveLength(0)
-    })
-
-    test("Получить пустой список. Запросил не авторизированный пользователь", async () => {
-        const {student} = testUsers
-        const context: Context = {
-            dataSource: {results: getDataSource(dbAPI), users: usersDataSource},
-            userAPI: {user: null}
-        }
-        const args = {studentId: student.id, msTestResultTimeStamp: "1633089600123"}
-        const response = await resolvers.Query.problemResults({}, args, context)
-        await expect(response).toHaveLength(0)
+        await expect(response.data?.testResults).toEqual(result)
     })
 })
 
-describe("results writeResult resolver", () => {
+describe("results Query.problemResults resolver", () => {
 
-    test("Записать результаты теста", async () => {
+    const {tutor, student} = testUsers
+    const query = gql`
+        query ProblemResults($studentId: ID, $msTestResultTimeStamp: String!) {
+            problemResults(studentId: $studentId, msTestResultTimeStamp: $msTestResultTimeStamp) {
+                estimate,
+                msTimeStamp,
+                userId,
+                problemId,
+                answer,
+                exerciseIndex,
+                msTestResultTimeStamp
+            }
+        }
+    `
+    const result: ProblemResult[] = [{
+        "userId": student.id,
+        "msTimeStamp": "1633089600123",
+        "problemId": "1",
+        "estimate": 100,
+        "msTestResultTimeStamp": "1633089600123",
+        "answer": "10",
+        exerciseIndex: 0
+    }, {
+        "userId": student.id,
+        "msTimeStamp": "1633089700123",
+        "problemId": "2",
+        "estimate": null,
+        "msTestResultTimeStamp": "1633089600123",
+        "answer": "7",
+        exerciseIndex: 1
+    }]
 
-        const userId = testUsers.studentForWrite.id
+    const dataSource: DataSource = {results: getDataSource(dbAPI), users: usersDataSource}
+
+    test("Получить список результатов", async () => {
+        const variables: GetProblemResultsArgs = {studentId: student.id, msTestResultTimeStamp: "1633089600123"}
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, tutor)
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.problemResults).toEqual(result)
+    })
+
+    test("Получить пустой список, если пользователь не залогинен", async () => {
+        const variables: GetProblemResultsArgs = {studentId: student.id, msTestResultTimeStamp: "1633089600123"}
+        const server = await getTestServer({typeDefs, resolvers, dataSource})
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.problemResults).toHaveLength(0)
+    })
+
+    test("Получить пустой список, если пользователь не авторизован как учитель", async () => {
+        const variables: GetProblemResultsArgs = {studentId: student.id, msTestResultTimeStamp: "1633089600123"}
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, student)
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.problemResults).toHaveLength(0)
+    })
+
+    test("Получить список результатов. Запросил ученик", async () => {
+        const variables: GetProblemResultsArgs = {msTestResultTimeStamp: "1633089600123"}
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, student)
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.problemResults).toEqual(result)
+    })
+})
+
+describe("results Query.TestResult resolver", () => {
+
+    const {tutor, student} = testUsers
+    const query = gql`
+        query TestResult($studentId: ID, $msTimeStamp: String!) {
+            testResult(studentId: $studentId, msTimeStamp: $msTimeStamp) {
+                msTimeStamp,
+                userId,
+                percentage
+                testId
+                finishedTimeStamp
+            }
+        }
+    `
+    const dataSource: DataSource = {results: getDataSource(dbAPI), users: usersDataSource}
+
+    test("Получить результат", async () => {
+        const variables: GetTestResultArgs = {studentId: student.id, msTimeStamp: "1633176000456"}
+        const result: TestResult = {
+            percentage: 70,
+            msTimeStamp: "1633176000456",
+            testId: "1",
+            userId: student.id,
+            finishedTimeStamp: 1633178240
+        }
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, tutor)
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.testResult).toEqual(result)
+    })
+
+    test("Получить null, если пользователь не залогинен", async () => {
+        const variables: GetTestResultArgs = {studentId: student.id, msTimeStamp: "1633176000456"}
+        const server = await getTestServer({typeDefs, resolvers, dataSource})
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data).toBeNull()
+    })
+
+    test("Получить null, если пользователь не авторизован как учитель", async () => {
+        const variables: GetTestResultArgs = {studentId: student.id, msTimeStamp: "1633176000456"}
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, student)
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data).toBeNull()
+    })
+
+    test("Получить результат, если пользователь авторизован как ученик", async () => {
+        const variables: GetTestResultArgs = {msTimeStamp: "1633176000456"}
+        const result: TestResult = {
+            percentage: 70,
+            msTimeStamp: "1633176000456",
+            testId: "1",
+            userId: student.id,
+            finishedTimeStamp: 1633178240
+        }
+        const server = await getTestServer({typeDefs, resolvers, dataSource}, student)
+        const response = await server.executeOperation({query, variables})
+        await expect(response.data?.testResult).toEqual(result)
+    })
+})
+
+describe("results Mutate.writeResult Mutate.updateResult resolver", () => {
+
+    const {studentForMutate} = testUsers
+    const writeResultResponses: WriteResponse[] = []
+
+    test("Записать и изменить результаты теста", async () => {
+
+        const userId = studentForMutate.id
         const {deleteTestResult, deleteProblemResult} = getTestDataSource(dbAPI)
-        const args: WriteResultArgs[] = []
-        const writeResultResponseReferences: WriteResultResponse[] = []
-        const writeResultResponses: WriteResultResponse[] = []
+        const args: WriteArgs[] = []
+        const writeResultResponseReferences: WriteResponse[] = []
 
         args.push({
             testId: 1,
             msTestResultTimeStamp: null,
             answer: "10",
-            problemId: 1
+            problemId: 1,
+            exerciseIndex: 0
         })
         writeResultResponseReferences.push({
             testResult: {
                 msTimeStamp: expect.any(String),
                 userId,
-                testId: 1,
+                testId: "1",
                 finishedTimeStamp: null,
-                percentage: 33
+                percentage: 15
             },
             problemResult: {
                 msTimeStamp: expect.any(String),
                 userId,
-                percentage: 100,
+                estimate: 10,
                 msTestResultTimeStamp: expect.any(String),
-                problemId: 1,
-                answer: "10"
+                problemId: "1",
+                answer: "10",
+                exerciseIndex: 0
             }
         })
         writeResultResponses.push(await writeResultExpect(args[0], writeResultResponseReferences[0]))
@@ -284,24 +439,26 @@ describe("results writeResult resolver", () => {
         args.push({
             testId: 1,
             msTestResultTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
-            answer: "7",
-            problemId: 2
+            answer: null,
+            problemId: 2,
+            exerciseIndex: 1
         })
         writeResultResponseReferences.push({
             testResult: {
                 msTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
                 userId,
-                testId: 1,
+                testId: "1",
                 finishedTimeStamp: null,
-                percentage: 67
+                percentage: 15
             },
             problemResult: {
                 msTimeStamp: expect.any(String),
                 userId,
-                percentage: 100,
+                estimate: null,
                 msTestResultTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
-                problemId: 2,
-                answer: "7"
+                problemId: "2",
+                answer: null,
+                exerciseIndex: 1
             }
         })
         writeResultResponses.push(await writeResultExpect(args[1], writeResultResponseReferences[1]))
@@ -310,26 +467,52 @@ describe("results writeResult resolver", () => {
             testId: 1,
             msTestResultTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
             answer: "12",
-            problemId: 3
+            problemId: 3,
+            exerciseIndex: 2
         })
         writeResultResponseReferences.push({
             testResult: {
                 msTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
                 userId,
-                testId: 1,
+                testId: "1",
                 finishedTimeStamp: expect.any(Number),
-                percentage: 100
+                percentage: 92
             },
             problemResult: {
                 msTimeStamp: expect.any(String),
                 userId,
-                percentage: 100,
+                estimate: 50,
                 msTestResultTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
-                problemId: 3,
-                answer: "12"
+                problemId: "3",
+                answer: "12",
+                exerciseIndex: 2
             }
         })
         writeResultResponses.push(await writeResultExpect(args[2], writeResultResponseReferences[2]))
+
+        await updateResultExpect({
+                studentId: userId,
+                estimate: 3,
+                msProblemResultTimeStamp: writeResultResponses[1].problemResult.msTimeStamp
+            }, {
+                testResult: {
+                    msTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
+                    userId,
+                    testId: "1",
+                    finishedTimeStamp: writeResultResponses[2].testResult.finishedTimeStamp,
+                    percentage: 97
+                },
+                problemResult: {
+                    msTimeStamp: writeResultResponses[1].problemResult.msTimeStamp,
+                    userId,
+                    estimate: 3,
+                    msTestResultTimeStamp: writeResultResponses[0].testResult.msTimeStamp,
+                    problemId: "2",
+                    answer: null,
+                    exerciseIndex: 1
+                }
+            }
+        )
 
         await Promise.all(writeResultResponses.map(response => deleteProblemResult({
             msTimeStamp: response.problemResult.msTimeStamp,

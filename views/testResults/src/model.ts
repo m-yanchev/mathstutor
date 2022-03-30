@@ -2,6 +2,7 @@ import TimeDate from "../../common/rules/TimeDate";
 
 type TestResultData = {
     msTimeStamp: string
+    finishedTimeStamp: number | null
     percentage: number
     test: TestData
 }
@@ -10,7 +11,7 @@ type TestData = {
     title: string
 }
 
-type ProfileData = {
+type StudentData = {
     name: string,
     email: string
 }
@@ -20,12 +21,14 @@ export class TestResult {
     _date: TimeDate
     _percent: number
     _test: Test
+    readonly finished: boolean
 
     constructor(data: TestResultData) {
         const {test, msTimeStamp, percentage} = data
         this._date = TimeDate.create(Number(msTimeStamp))
         this._percent = percentage
         this._test = Test.create(test)
+        this.finished = Boolean(data.finishedTimeStamp)
     }
 
     static createList(list: TestResultData[] | null): TestResult[] | null {
@@ -71,19 +74,19 @@ class Test {
     }
 }
 
-export class Profile {
+export class Student {
 
     _name: string
     _email: string
 
-    constructor(data: ProfileData) {
+    constructor(data: StudentData) {
         const {name, email} = data
         this._name = name
         this._email = email
     }
 
-    static create(data: ProfileData | null): Profile | null {
-        return data ? new Profile(data) : null
+    static create(data: StudentData | null): Student | null {
+        return data ? new Student(data) : null
     }
 
     get name(): string {

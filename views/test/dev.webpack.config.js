@@ -1,1 +1,1 @@
-module.exports = require('../dev.webpack.config')("test");
+module.exports = require('../dev.webpack.config')("test", "devApp.tsx");

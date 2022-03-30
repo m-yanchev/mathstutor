@@ -1,6 +1,7 @@
-import {CssBaseline, ThemeProvider} from "@mui/material";
+import {ThemeProvider} from "@mui/material/styles";
 import getTheme from "../../theme";
 import React, {ReactNode} from "react";
+import {CssBaseline} from "@mui/material";
 
 type Props = {
     children: ReactNode | ReactNode[]

@@ -2,8 +2,8 @@ import React from "react";
 import {Box, TextField} from "@mui/material";
 
 export type AutoComplete = "email" | "new-password" | "current-password" | "username" | "off"
-export type Type = "email" | "password" | "text"
-export type Label = "Имя" | "Эл. адрес" | "Пароль" | "Новый пароль" | "Подтвердите пароль" | "Ответ"
+export type Type = "email" | "password" | "text" | "range" | "number"
+export type Label = string
 
 type Props = {
     id: string,
@@ -19,6 +19,7 @@ type Props = {
     onChange: (arg0: string) => void,
     onBlur: () => void,
     onFocus?: () => void
+    max?: number
 }
 
 export default function FormTextField(props: Props) {

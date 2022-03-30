@@ -51,7 +51,8 @@ const getItems: GetItems = async (tableName, filter) => {
     const params: ScanCommandInput = {
         FilterExpression: filter.expression,
         ExpressionAttributeValues: filter.values,
-        TableName: tableName}
+        TableName: tableName
+    }
     const command: ScanCommand = new ScanCommand(params)
     const response = await client.send(command)
     return response.Items

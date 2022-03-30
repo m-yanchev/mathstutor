@@ -9,22 +9,27 @@ type Props = {
     header: string,
     title?: string,
     children: any,
-    containerProps?: ContainerProps
+    containerProps?: ContainerProps,
+    headerProps?: HeaderProps
 }
 type ContainerProps = {
     maxWidth?: MaxWidth
+}
+type HeaderProps = {
+    onBack?: () => void
 }
 
 export default function AppPage(props: Props) {
 
     const {height, children, profile, title, header} = props
+    const headerProps = props.headerProps || {}
     const containerProps = props.containerProps || {}
 
     return (
         <>
             <AppBar profile={Boolean(profile)}/>
             <Container height={height} {...containerProps}>
-                <Header title={title} sx={{margin: "0 16px 22px 16px"}}>{header}</Header>
+                <Header title={title} {...headerProps}>{header}</Header>
                 {children}
             </Container>
         </>

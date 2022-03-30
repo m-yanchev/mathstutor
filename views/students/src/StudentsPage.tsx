@@ -15,7 +15,7 @@ export default function StudentsPage() {
     const profiles = dataState.data ? dataState.data.students.map(profile => Profile.create(profile)) : null
 
     return (
-        <AppPage header={"Ученики"}>
+        <AppPage header={"Ученики"} profile>
             {dataState.loading ?
                 <Progress/> :
                     profiles ?
